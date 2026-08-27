@@ -4,20 +4,75 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Microwave Pasta Cooker · Portion Slider</title>
+  <script>
+    (function () {
+      var t = localStorage.getItem('theme')
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t)
+    })()
+  </script>
   <style>
     :root {
-      --bg: #faf7f2;
-      --card: #ffffff;
-      --ink: #2c2416;
-      --muted: #6b5e4a;
-      --accent: #c45c26;
-      --accent-soft: #f4e6d8;
-      --border: #e8dfd0;
-      --header-bg: #2c2416;
-      --track: #e8dfd0;
-      --thumb: #c45c26;
+      --bg: #FFFFFF;
+      --card: #FFFFFF;
+      --ink: #080808;
+      --muted: #767676;
+      --accent: #3E3D32;
+      --accent-soft: #D0D0D0;
+      --border: #C6C6C6;
+      --header-bg: #3E3D32;
+      --header-fg: #FFFFFF;
+      --track: #C6C6C6;
+      --thumb: #080808;
+      --stat: #D0D0D0;
       --serif: "Times New Roman", Times, TimesNR, serif;
     }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --bg: #121212;
+        --card: #1c1c1c;
+        --ink: #D0D0D0;
+        --muted: #767676;
+        --accent: #D0D0D0;
+        --accent-soft: #262626;
+        --border: #3E3D32;
+        --header-bg: #D0D0D0;
+        --header-fg: #121212;
+        --track: #3E3D32;
+        --thumb: #D0D0D0;
+        --stat: #262626;
+      }
+    }
+    html[data-theme="light"] {
+      --bg: #FFFFFF;
+      --card: #FFFFFF;
+      --ink: #080808;
+      --muted: #767676;
+      --accent: #3E3D32;
+      --accent-soft: #D0D0D0;
+      --border: #C6C6C6;
+      --header-bg: #3E3D32;
+      --header-fg: #FFFFFF;
+      --track: #C6C6C6;
+      --thumb: #080808;
+      --stat: #D0D0D0;
+      color-scheme: light;
+    }
+    html[data-theme="dark"] {
+      --bg: #121212;
+      --card: #1c1c1c;
+      --ink: #D0D0D0;
+      --muted: #767676;
+      --accent: #D0D0D0;
+      --accent-soft: #262626;
+      --border: #3E3D32;
+      --header-bg: #D0D0D0;
+      --header-fg: #121212;
+      --track: #3E3D32;
+      --thumb: #D0D0D0;
+      --stat: #262626;
+      color-scheme: dark;
+    }
+    html { color-scheme: light dark; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font: 100% var(--serif);
@@ -34,6 +89,29 @@
       margin-bottom: 2rem;
       padding-bottom: 1.4rem;
       border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+    .theme-toggle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 2.4rem;
+      height: 2.4rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+    .theme-toggle svg { width: 1.15rem; height: 1.15rem; display: block; }
+    html[data-theme="dark"] .icon-sun,
+    :root:not([data-theme]) .icon-sun { display: none; }
+    html[data-theme="light"] .icon-moon { display: none; }
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme]) .icon-moon { display: none; }
+      :root:not([data-theme]) .icon-sun { display: block; }
     }
     .eyebrow {
       font-size: 0.75rem;
@@ -61,7 +139,7 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(44,36,22,0.06);
+      box-shadow: 0 4px 24px rgba(8,8,8,0.08);
       padding: 1.4rem 1.3rem;
       margin-bottom: 1.25rem;
     }
@@ -84,7 +162,10 @@
     select {
       width: 100%;
       appearance: none;
-      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b5e4a' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 1rem center;
+      background-color: var(--card);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23767676' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 0.75rem 2.4rem 0.75rem 0.9rem;
@@ -104,7 +185,7 @@
       margin-bottom: 1.3rem;
     }
     .stat {
-      background: #f8f4ec;
+      background: var(--stat);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 0.85rem 0.75rem;
@@ -112,7 +193,7 @@
     }
     .stat.primary {
       background: var(--header-bg);
-      color: #faf7f2;
+      color: var(--header-fg);
       border-color: var(--header-bg);
     }
     .stat .label {
@@ -166,8 +247,8 @@
       height: 22px;
       border-radius: 50%;
       background: var(--thumb);
-      border: 3px solid #fff;
-      box-shadow: 0 1px 6px rgba(44,36,22,0.25);
+      border: 3px solid var(--card);
+      box-shadow: 0 1px 6px rgba(8,8,8,0.28);
       cursor: grab;
     }
     input[type="range"]::-moz-range-thumb {
@@ -175,8 +256,8 @@
       height: 22px;
       border-radius: 50%;
       background: var(--thumb);
-      border: 3px solid #fff;
-      box-shadow: 0 1px 6px rgba(44,36,22,0.25);
+      border: 3px solid var(--card);
+      box-shadow: 0 1px 6px rgba(8,8,8,0.28);
       cursor: grab;
     }
     .ticks {
@@ -202,7 +283,7 @@
       display: block;
       width: 2px;
       height: 8px;
-      background: #c4b59a;
+      background: var(--muted);
       margin: 0 auto 0.2rem;
     }
     .tick.active { color: var(--accent); }
@@ -220,14 +301,14 @@
     .howto li { margin-bottom: 0.45rem; }
     .howto li strong { color: var(--ink); }
     .formula-box {
-      background: #f8f4ec;
+      background: var(--accent-soft);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1rem 1.1rem;
       font-size: 0.9rem;
     }
     .formula-box code {
-      background: #efe8dc;
+      background: var(--stat);
       padding: 0.12rem 0.4rem;
       border-radius: 4px;
       font-family: ui-monospace, Menlo, monospace;
@@ -241,7 +322,7 @@
       font-size: 0.84rem;
       color: var(--muted);
       background: var(--accent-soft);
-      border: 1px solid #edd9c4;
+      border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1rem 1.15rem;
       display: grid;
@@ -277,16 +358,20 @@
     }
     .geom-ticks {
       position: relative;
-      height: 1.7rem;
-      margin-top: 0.25rem;
+      height: 1.9rem;
+      margin-top: 0.3rem;
     }
-    .geom-ticks span {
+    .geom-ticks button {
       position: absolute;
       transform: translateX(-50%);
-      font-size: 0.68rem;
+      background: none;
+      border: 0;
+      padding: 0;
       color: var(--muted);
-      white-space: nowrap;
+      cursor: pointer;
     }
+    .geom-ticks button.active { color: var(--ink); }
+    .geom-ticks svg { display: block; width: 22px; height: 14px; }
     @media (max-width: 640px) {
       .readout { grid-template-columns: 1fr 1fr; }
       .stat .value { font-size: 1.55rem; }
@@ -296,6 +381,17 @@
 <body>
   <div class="container">
     <header>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M15.5 2.1A10 10 0 1 0 21.9 15.5 8 8 0 0 1 15.5 2.1z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" fill="currentColor"/>
+          <g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none">
+            <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
+          </g>
+        </svg>
+      </button>
       <div class="eyebrow">Microwave Pasta Cooker</div>
       <h1>Portion Slider</h1>
       <p class="subtitle">LG NeoChef MH6535 · 1000&nbsp;W microwave mode · 83&nbsp;g pasta + 333&nbsp;ml water per unit · times in 10&nbsp;s steps</p>
@@ -351,10 +447,18 @@
           </div>
           <input id="manual-geom" type="range" min="-0.20" max="0.40" step="0.05" value="0.25">
           <div class="geom-ticks">
-            <span style="left:8.3%">-0.15 thin</span>
-            <span style="left:33.3%">0 short</span>
-            <span style="left:58.3%">0.15 thick</span>
-            <span style="left:75%">0.25 long</span>
+            <button type="button" style="left:8.3%" data-geom="-0.15" title="very thin -0.15" aria-label="very thin">
+              <svg viewBox="0 0 22 14" aria-hidden="true"><path d="M2 7h18" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+            </button>
+            <button type="button" style="left:33.3%" data-geom="0" title="short 0" aria-label="short">
+              <svg viewBox="0 0 22 14" aria-hidden="true"><rect x="6" y="4" width="10" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+            </button>
+            <button type="button" style="left:58.3%" data-geom="0.15" title="thick / hollow 0.15" aria-label="thick hollow">
+              <svg viewBox="0 0 22 14" aria-hidden="true"><rect x="5" y="3" width="12" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7h6" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+            </button>
+            <button type="button" style="left:75%" data-geom="0.25" title="long 0.25" aria-label="long">
+              <svg viewBox="0 0 22 14" aria-hidden="true"><path d="M2 8c3-4 5 4 8 0s5 4 8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -531,8 +635,12 @@
         this.el('manual').classList.toggle('open', manual)
         if (manual) {
           const adSec = Number(this.el('manual-ad').value)
+          const geom = Number(this.el('manual-geom').value)
           this.el('manual-ad-out').textContent = this.fmtTime(adSec / 60)
-          this.el('manual-geom-out').textContent = this.geomLabel(Number(this.el('manual-geom').value))
+          this.el('manual-geom-out').textContent = this.geomLabel(geom)
+          document.querySelectorAll('.geom-ticks button').forEach(btn => {
+            btn.classList.toggle('active', Math.abs(Number(btn.dataset.geom) - geom) < 0.03)
+          })
         }
         const m = Number(this.el('mult').value)
         const pasta = this.currentPasta()
@@ -592,6 +700,20 @@
       cooker.el('manual-ad').addEventListener('input', () => cooker.update())
       cooker.el('manual-geom').addEventListener('input', () => cooker.update())
       cooker.el('manual-bronze').addEventListener('change', () => cooker.update())
+      document.querySelectorAll('.geom-ticks button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          cooker.el('manual-geom').value = btn.dataset.geom
+          cooker.update()
+        })
+      })
+      cooker.el('theme-toggle').addEventListener('click', () => {
+        const root = document.documentElement
+        const now = root.getAttribute('data-theme')
+          || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        const next = now === 'dark' ? 'light' : 'dark'
+        root.setAttribute('data-theme', next)
+        localStorage.setItem('theme', next)
+      })
       cooker._lastId = cooker.el('pasta').value
       cooker.update()
     })

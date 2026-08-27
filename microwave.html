@@ -254,6 +254,39 @@
       font-size: 0.76rem;
       color: var(--muted);
     }
+    .manual {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .manual.open { display: block; }
+    .manual-row { margin-bottom: 0.95rem; }
+    .manual-row:last-child { margin-bottom: 0; }
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .check input {
+      width: 1.05rem;
+      height: 1.05rem;
+      accent-color: var(--accent);
+    }
+    .geom-ticks {
+      position: relative;
+      height: 1.7rem;
+      margin-top: 0.25rem;
+    }
+    .geom-ticks span {
+      position: absolute;
+      transform: translateX(-50%);
+      font-size: 0.68rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
     @media (max-width: 640px) {
       .readout { grid-template-columns: 1fr 1fr; }
       .stat .value { font-size: 1.55rem; }
@@ -291,8 +324,40 @@
           <option value="rigatoni">Rigatoni</option>
           <option value="angel">Angel hair / Capellini</option>
         </optgroup>
+        <optgroup label="Custom">
+          <option value="manual">Manual</option>
+        </optgroup>
       </select>
       <p class="pasta-note" id="pasta-note"></p>
+
+      <div class="manual" id="manual">
+        <div class="manual-row">
+          <div class="slider-head">
+            <label class="field" for="manual-ad" style="margin:0">Al dente (package)</label>
+            <span class="mult" id="manual-ad-out">10:00</span>
+          </div>
+          <input id="manual-ad" type="range" min="120" max="960" step="10" value="600">
+        </div>
+        <div class="manual-row">
+          <label class="check">
+            <input id="manual-bronze" type="checkbox">
+            Bronze-cut die
+          </label>
+        </div>
+        <div class="manual-row">
+          <div class="slider-head">
+            <label class="field" for="manual-geom" style="margin:0">Geometry</label>
+            <span class="mult-sub" id="manual-geom-out">long +0:15</span>
+          </div>
+          <input id="manual-geom" type="range" min="-0.15" max="0.25" step="0.05" value="0.25">
+          <div class="geom-ticks">
+            <span style="left:0%">thin</span>
+            <span style="left:37.5%">short</span>
+            <span style="left:75%">thick</span>
+            <span style="left:100%">long</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -417,6 +482,32 @@
         const geom = pasta.geom || 0
         return { ad: pasta.ad, vol, die, geom, t: pasta.ad + 1.90 + vol + die + geom }
       },
+      geomLabel(g) {
+        if (g <= -0.10) return 'very thin ' + this.fmtSigned(g)
+        if (g < 0.08) return 'short ' + this.fmtSigned(g)
+        if (g < 0.22) return 'thick / hollow ' + this.fmtSigned(g)
+        return 'long ' + this.fmtSigned(g)
+      },
+      seedManual(pasta) {
+        this.el('manual-ad').value = String(Math.round(pasta.ad * 60 / 10) * 10)
+        this.el('manual-bronze').checked = !!pasta.bronze
+        this.el('manual-geom').value = String(pasta.geom || 0)
+      },
+      currentPasta() {
+        const id = this.el('pasta').value
+        if (id !== 'manual') return this.pastas[id]
+        const adSec = Number(this.el('manual-ad').value)
+        const geom = Number(this.el('manual-geom').value)
+        const bronze = this.el('manual-bronze').checked
+        return {
+          ad: adSec / 60,
+          bronze,
+          geom,
+          note: 'Manual · al dente ' + this.fmtTime(adSec / 60)
+            + (bronze ? ' · bronze' : ' · Teflon / other')
+            + ' · ' + this.geomLabel(geom)
+        }
+      },
       el(id) { return document.getElementById(id) },
       snap() {
         const slider = this.el('mult')
@@ -426,8 +517,15 @@
         this.update()
       },
       update() {
+        const manual = this.el('pasta').value === 'manual'
+        this.el('manual').classList.toggle('open', manual)
+        if (manual) {
+          const adSec = Number(this.el('manual-ad').value)
+          this.el('manual-ad-out').textContent = this.fmtTime(adSec / 60)
+          this.el('manual-geom-out').textContent = this.geomLabel(Number(this.el('manual-geom').value))
+        }
         const m = Number(this.el('mult').value)
-        const pasta = this.pastas[this.el('pasta').value]
+        const pasta = this.currentPasta()
         const x = this.compute(m, pasta)
         const onStop = this.stops.some(s => Math.abs(m - s) < 0.001)
         this.el('pasta-note').textContent = pasta.note
@@ -470,9 +568,22 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       cooker.buildTicks()
-      cooker.el('pasta').addEventListener('change', () => cooker.update())
+      cooker.el('pasta').addEventListener('change', () => {
+        const id = cooker.el('pasta').value
+        if (id === 'manual') {
+          const prev = cooker._lastId && cooker.pastas[cooker._lastId]
+          cooker.seedManual(prev || cooker.pastas['spaghetti-bronzo'])
+        } else {
+          cooker._lastId = id
+        }
+        cooker.update()
+      })
       cooker.el('mult').addEventListener('input', () => cooker.update())
       cooker.el('mult').addEventListener('change', () => cooker.snap())
+      cooker.el('manual-ad').addEventListener('input', () => cooker.update())
+      cooker.el('manual-geom').addEventListener('input', () => cooker.update())
+      cooker.el('manual-bronze').addEventListener('change', () => cooker.update())
+      cooker._lastId = cooker.el('pasta').value
       cooker.update()
     })
   </script>

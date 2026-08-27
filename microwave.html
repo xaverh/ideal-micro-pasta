@@ -4,10 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Microwave Pasta Cooker · Portion Slider</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <style>
     :root {
       --bg: #faf7f2;
@@ -20,13 +16,15 @@
       --header-bg: #2c2416;
       --track: #e8dfd0;
       --thumb: #c45c26;
+      --serif: "Times New Roman", Times, TimesNR, serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Inter', system-ui, sans-serif;
+      font: 100% var(--serif);
       background: var(--bg);
       color: var(--ink);
-      line-height: 1.5;
+      line-height: 1.62;
+      word-spacing: 0.04em;
       min-height: 100vh;
       padding: 2rem 1rem 4rem;
     }
@@ -46,10 +44,11 @@
       margin-bottom: 0.5rem;
     }
     h1 {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-family: var(--serif);
+      font-size: clamp(2.1rem, 5vw, 2.85rem);
       font-weight: 700;
-      line-height: 1.15;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
       margin-bottom: 0.4rem;
     }
     .subtitle {
@@ -67,8 +66,10 @@
       margin-bottom: 1.25rem;
     }
     h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.35rem;
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.2;
       margin-bottom: 0.85rem;
     }
     label.field {
@@ -87,7 +88,7 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 0.75rem 2.4rem 0.75rem 0.9rem;
-      font: 500 1rem Inter, system-ui, sans-serif;
+      font: 500 1rem var(--serif);
       color: var(--ink);
     }
     select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
@@ -122,7 +123,7 @@
       margin-bottom: 0.2rem;
     }
     .stat .value {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--serif);
       font-size: 1.85rem;
       font-weight: 700;
       line-height: 1.1;
@@ -130,7 +131,7 @@
     }
     .stat .unit {
       display: block;
-      font-family: Inter, system-ui, sans-serif;
+      font-family: var(--serif);
       font-size: 0.72rem;
       font-weight: 500;
       opacity: 0.8;
@@ -144,7 +145,7 @@
       margin-bottom: 0.55rem;
     }
     .mult {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: var(--serif);
       font-size: 1.6rem;
       font-weight: 700;
     }
@@ -260,7 +261,7 @@
   </style>
 </head>
 <body>
-  <div class="container" x-data="cooker()">
+  <div class="container">
     <header>
       <div class="eyebrow">Microwave Pasta Cooker</div>
       <h1>Portion Slider</h1>
@@ -269,41 +270,51 @@
 
     <div class="card">
       <label class="field" for="pasta">Pasta</label>
-      <select id="pasta" x-model="pastaId">
+      <select id="pasta">
         <optgroup label="Premium &amp; bronze-cut">
-          <template x-for="p in pastas.filter(p => p.group === 'premium')" :key="p.id">
-            <option :value="p.id" x-text="p.name"></option>
-          </template>
+          <option value="spaghettoni-bronzo">Barilla Spaghettoni al Bronzo</option>
+          <option value="spaghetti-bronzo" selected>Barilla Spaghetti al Bronzo</option>
+          <option value="rey-n3">Pasta Rey Spaghetti n.3</option>
+          <option value="rey-n5">Pasta Rey Spaghetti n.5</option>
+          <option value="rey-linguine">Pasta Rey Linguine</option>
+          <option value="fettuccia">De Cecco Fettuccia n.150</option>
+          <option value="fusilli-lunghi">De Cecco Fusilli Lunghi Bucati n.5</option>
+          <option value="orecchiette">De Cecco Orecchiette n.91</option>
         </optgroup>
         <optgroup label="Everyday classics">
-          <template x-for="p in pastas.filter(p => p.group === 'classic')" :key="p.id">
-            <option :value="p.id" x-text="p.name"></option>
-          </template>
+          <option value="spaghetti">Spaghetti (standard)</option>
+          <option value="linguine">Linguine</option>
+          <option value="penne">Penne</option>
+          <option value="fusilli">Fusilli / Rotini</option>
+          <option value="farfalle">Farfalle (bow-ties)</option>
+          <option value="macaroni">Macaroni / Elbows</option>
+          <option value="rigatoni">Rigatoni</option>
+          <option value="angel">Angel hair / Capellini</option>
         </optgroup>
       </select>
-      <p class="pasta-note" x-text="current.note"></p>
+      <p class="pasta-note" id="pasta-note"></p>
     </div>
 
     <div class="card">
       <div class="readout">
         <div class="stat primary">
           <div class="label">Cook time</div>
-          <div class="value" x-text="fmtTime(cookMinutes)"></div>
+          <div class="value" id="out-time">13:10</div>
           <span class="unit">al dente start · 10 s steps</span>
         </div>
         <div class="stat">
           <div class="label">Pasta</div>
-          <div class="value" x-text="fmtNum(pastaG)"></div>
+          <div class="value" id="out-pasta">83</div>
           <span class="unit">g dry</span>
         </div>
         <div class="stat">
           <div class="label">Water</div>
-          <div class="value" x-text="fmtNum(waterMl)"></div>
+          <div class="value" id="out-water">333</div>
           <span class="unit">ml cold tap</span>
         </div>
         <div class="stat">
           <div class="label">Salt</div>
-          <div class="value" x-text="fmtSalt(saltG)"></div>
+          <div class="value" id="out-salt">3</div>
           <span class="unit">g ≈ 9 g/L</span>
         </div>
       </div>
@@ -311,33 +322,14 @@
       <div class="slider-wrap">
         <div class="slider-head">
           <div>
-            <span class="mult" x-text="fmtMult(mult)"></span>
-            <span class="mult-sub" x-show="!isStop" style="margin-left:.35rem">interpolated</span>
+            <span class="mult" id="out-mult">1×</span>
+            <span class="mult-sub" id="out-interp"></span>
           </div>
-          <div class="mult-sub" x-text="isStop ? 'fixed stop' : 'between stops'"></div>
+          <div class="mult-sub" id="out-stop">fixed stop</div>
         </div>
-        <input
-          type="range"
-          min="1"
-          max="6"
-          step="0.02"
-          x-model.number="mult"
-          @change="maybeSnap()"
-          :aria-valuetext="fmtMult(mult)"
-        >
-        <div class="ticks">
-          <template x-for="s in stops" :key="s">
-            <button
-              type="button"
-              class="tick"
-              :class="{ active: near(mult, s) }"
-              :style="'left:' + pos(s) + '%'"
-              @click="mult = s"
-              x-text="labelStop(s)"
-            ></button>
-          </template>
-        </div>
-        <p class="flex-note">Stops at 1× · 1.5× · 2× · 3× · 4× · 5× · 6×. Drag freely between them; pasta, water and salt interpolate. Cook time interpolates and snaps to the nearest 10&nbsp;s. Releasing within 0.08 of a stop snaps the multiplier to it.</p>
+        <input id="mult" type="range" min="1" max="6" step="0.02" value="1">
+        <div class="ticks" id="ticks"></div>
+        <p class="flex-note">Stops at 1× · 1.5× · 2× · 3× · 4× · 5× · 6×. Drag freely between them. Cook time uses the physics-fitted algorithm and snaps to 10&nbsp;s. Releasing near a stop snaps the multiplier to it.</p>
       </div>
     </div>
 
@@ -363,12 +355,12 @@
         <ul>
           <li><code>t_ad</code> — package al dente time (min)</li>
           <li><code>t_cold = 1.90</code> — cold-start for the first 333&nbsp;ml at 1000&nbsp;W</li>
-          <li><code>t_vol(m) = 2.05·(m−1) + 0.08·(m−1)²</code> — extra water mass (linear heat capacity + mild quadratic for uneven large loads)</li>
+          <li><code>t_vol(m) = 2.05·(m−1) + 0.08·(m−1)²</code> — extra water mass</li>
           <li><code>t_die = 0.40</code> if bronze-cut, else 0</li>
-          <li><code>t_geom</code> — +0.25 long shapes · +0.15 thick/hollow · −0.15 very thin</li>
+          <li><code>t_geom</code> — +0.25 long · +0.15 thick/hollow · −0.15 very thin</li>
         </ul>
-        Result rounded to the nearest 10&nbsp;s. Live breakdown for this setting:
-        <p style="margin-top:.7rem" x-text="breakdown"></p>
+        Result rounded to the nearest 10&nbsp;s.
+        <p style="margin-top:.7rem" id="breakdown"></p>
       </div>
     </div>
 
@@ -379,95 +371,110 @@
     </div>
 
     <footer>
-      Metric only · Microwave spaghetti maker · Ninja Foodi Max AF400EU · Ninja Woodfire OO101EU · LG NeoChef MH6535
+      Metric only · Microwave spaghetti maker · Ninja Foodi Max AF400EU · Ninja Woodfire OO101EU · LG NeoChef MH6535 · vanilla JS
     </footer>
   </div>
 
   <script>
-    function cooker() {
-      const stops = [1, 1.5, 2, 3, 4, 5, 6];
-      const pastas = [
-        { id: 'spaghettoni-bronzo', group: 'premium', name: 'Barilla Spaghettoni al Bronzo', note: 'Package 12:00 · al dente 11:00 · bronze, thick long', ad: 11, bronze: true, geom: 0.25 },
-        { id: 'spaghetti-bronzo', group: 'premium', name: 'Barilla Spaghetti al Bronzo', note: 'Package 11:00 · al dente 10:00 · bronze, long', ad: 10, bronze: true, geom: 0.25 },
-        { id: 'rey-n3', group: 'premium', name: 'Pasta Rey Spaghetti n.3', note: 'Package ~9:00 · al dente 8:00 · bronze, thin long', ad: 8, bronze: true, geom: -0.15 },
-        { id: 'rey-n5', group: 'premium', name: 'Pasta Rey Spaghetti n.5', note: 'Package ~10:00 · al dente 9:30 · bronze, long', ad: 9.5, bronze: true, geom: 0.25 },
-        { id: 'rey-linguine', group: 'premium', name: 'Pasta Rey Linguine', note: 'Package ~10:30 · al dente 10:00 · bronze, flat long', ad: 10, bronze: true, geom: 0.25 },
-        { id: 'fettuccia', group: 'premium', name: 'De Cecco Fettuccia n.150', note: 'Package 12:00 · al dente 10:00 · bronze, flat long', ad: 10, bronze: true, geom: 0.25 },
-        { id: 'fusilli-lunghi', group: 'premium', name: 'De Cecco Fusilli Lunghi Bucati n.5', note: 'Package 13:00 · al dente 12:00 · bronze, hollow long', ad: 12, bronze: true, geom: 0.25 },
-        { id: 'orecchiette', group: 'premium', name: 'De Cecco Orecchiette n.91', note: 'Package 11:00 · al dente 9:00 · bronze, thick short', ad: 9, bronze: true, geom: 0.15 },
-        { id: 'spaghetti', group: 'classic', name: 'Spaghetti (standard)', note: 'Typical package 9–11 min · al dente 9:30', ad: 9.5, bronze: false, geom: 0.25 },
-        { id: 'linguine', group: 'classic', name: 'Linguine', note: 'Typical package 9–11 min · al dente 9:30', ad: 9.5, bronze: false, geom: 0.25 },
-        { id: 'penne', group: 'classic', name: 'Penne', note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
-        { id: 'fusilli', group: 'classic', name: 'Fusilli / Rotini', note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
-        { id: 'farfalle', group: 'classic', name: 'Farfalle (bow-ties)', note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
-        { id: 'macaroni', group: 'classic', name: 'Macaroni / Elbows', note: 'Typical package 8–10 min · al dente 8:00', ad: 8, bronze: false, geom: 0 },
-        { id: 'rigatoni', group: 'classic', name: 'Rigatoni', note: 'Typical package 12–13 min · al dente 12:00', ad: 12, bronze: false, geom: 0.15 },
-        { id: 'angel', group: 'classic', name: 'Angel hair / Capellini', note: 'Typical package 3–5 min · al dente 4:00 · very thin', ad: 4, bronze: false, geom: -0.15 }
-      ];
-
-      return {
-        pastas,
-        stops,
-        pastaId: 'spaghetti-bronzo',
-        mult: 1,
-        get current() {
-          return this.pastas.find(p => p.id === this.pastaId) || this.pastas[0];
-        },
-        get pastaG() { return Math.round(83 * this.mult * 10) / 10; },
-        get waterMl() {
-          if (Math.abs(this.mult - 1.5) < 0.001) return 500;
-          return Math.round(333 * this.mult);
-        },
-        get saltG() { return Math.round(3 * this.mult * 10) / 10; },
-        get cookMinutes() { return this.compute(this.mult).t; },
-        get breakdown() {
-          const x = this.compute(this.mult);
-          return 't_ad ' + this.fmtTime(x.ad)
-            + '  +  t_cold 1:54'
-            + '  +  t_vol ' + this.fmtTime(x.vol)
-            + '  +  t_die ' + this.fmtSigned(x.die)
-            + '  +  t_geom ' + this.fmtSigned(x.geom)
-            + '  =  ' + this.fmtTime(x.t);
-        },
-        get isStop() { return this.stops.some(s => Math.abs(this.mult - s) < 0.001); },
-        compute(m) {
-          const p = this.current;
-          const dm = Math.max(0, m - 1);
-          const vol = 2.05 * dm + 0.08 * dm * dm;
-          const die = p.bronze ? 0.40 : 0;
-          const geom = p.geom || 0;
-          const t = p.ad + 1.90 + vol + die + geom;
-          return { ad: p.ad, vol, die, geom, t };
-        },
-        maybeSnap() {
-          const hit = this.stops.find(s => Math.abs(this.mult - s) <= 0.08);
-          if (hit != null) this.mult = hit;
-        },
-        near(m, s) { return Math.abs(m - s) < 0.08; },
-        pos(s) { return ((s - 1) / 5) * 100; },
-        labelStop(s) { return s === Math.floor(s) ? s + '×' : s.toString().replace('.', ',') + '×'; },
-        fmtMult(m) {
-          const v = Math.round(m * 20) / 20;
-          return (Number.isInteger(v) ? String(v) : v.toFixed(2).replace(/0$/, '').replace('.', ',')) + '×';
-        },
-        fmtTime(min) {
-          const secs = Math.max(0, Math.round((min * 60) / 10) * 10);
-          const mm = Math.floor(secs / 60);
-          const ss = secs % 60;
-          return mm + ':' + String(ss).padStart(2, '0');
-        },
-        fmtSigned(min) {
-          const sign = min < 0 ? '−' : '';
-          return sign + this.fmtTime(Math.abs(min));
-        },
-        fmtNum(n) {
-          return Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
-        },
-        fmtSalt(n) {
-          return (Math.round(n * 10) / 10).toString().replace('.', ',');
-        }
-      };
+    const cooker = {
+      stops: [1, 1.5, 2, 3, 4, 5, 6],
+      pastas: {
+        'spaghettoni-bronzo': { note: 'Package 12:00 · al dente 11:00 · bronze, thick long', ad: 11, bronze: true, geom: 0.25 },
+        'spaghetti-bronzo': { note: 'Package 11:00 · al dente 10:00 · bronze, long', ad: 10, bronze: true, geom: 0.25 },
+        'rey-n3': { note: 'Package ~9:00 · al dente 8:00 · bronze, thin long', ad: 8, bronze: true, geom: -0.15 },
+        'rey-n5': { note: 'Package ~10:00 · al dente 9:30 · bronze, long', ad: 9.5, bronze: true, geom: 0.25 },
+        'rey-linguine': { note: 'Package ~10:30 · al dente 10:00 · bronze, flat long', ad: 10, bronze: true, geom: 0.25 },
+        'fettuccia': { note: 'Package 12:00 · al dente 10:00 · bronze, flat long', ad: 10, bronze: true, geom: 0.25 },
+        'fusilli-lunghi': { note: 'Package 13:00 · al dente 12:00 · bronze, hollow long', ad: 12, bronze: true, geom: 0.25 },
+        'orecchiette': { note: 'Package 11:00 · al dente 9:00 · bronze, thick short', ad: 9, bronze: true, geom: 0.15 },
+        'spaghetti': { note: 'Typical package 9–11 min · al dente 9:30', ad: 9.5, bronze: false, geom: 0.25 },
+        'linguine': { note: 'Typical package 9–11 min · al dente 9:30', ad: 9.5, bronze: false, geom: 0.25 },
+        'penne': { note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
+        'fusilli': { note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
+        'farfalle': { note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
+        'macaroni': { note: 'Typical package 8–10 min · al dente 8:00', ad: 8, bronze: false, geom: 0 },
+        'rigatoni': { note: 'Typical package 12–13 min · al dente 12:00', ad: 12, bronze: false, geom: 0.15 },
+        'angel': { note: 'Typical package 3–5 min · al dente 4:00 · very thin', ad: 4, bronze: false, geom: -0.15 }
+      },
+      fmtTime(min) {
+        const secs = Math.max(0, Math.round((min * 60) / 10) * 10)
+        return Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0')
+      },
+      fmtSigned(min) {
+        return (min < 0 ? '−' : '') + this.fmtTime(Math.abs(min))
+      },
+      fmtMult(m) {
+        const v = Math.round(m * 50) / 50
+        return (Number.isInteger(v) ? String(v) : String(v).replace('.', ',')) + '×'
+      },
+      fmtNum(n) {
+        return Number.isInteger(n) ? String(n) : String(n).replace('.', ',')
+      },
+      compute(m, pasta) {
+        const dm = Math.max(0, m - 1)
+        const vol = 2.05 * dm + 0.08 * dm * dm
+        const die = pasta.bronze ? 0.40 : 0
+        const geom = pasta.geom || 0
+        return { ad: pasta.ad, vol, die, geom, t: pasta.ad + 1.90 + vol + die + geom }
+      },
+      el(id) { return document.getElementById(id) },
+      snap() {
+        const slider = this.el('mult')
+        const m = Number(slider.value)
+        const hit = this.stops.find(s => Math.abs(m - s) <= 0.08)
+        if (hit != null) slider.value = hit
+        this.update()
+      },
+      update() {
+        const m = Number(this.el('mult').value)
+        const pasta = this.pastas[this.el('pasta').value]
+        const x = this.compute(m, pasta)
+        const onStop = this.stops.some(s => Math.abs(m - s) < 0.001)
+        this.el('pasta-note').textContent = pasta.note
+        this.el('out-time').textContent = this.fmtTime(x.t)
+        this.el('out-pasta').textContent = this.fmtNum(Math.round(83 * m * 10) / 10)
+        this.el('out-water').textContent = Math.abs(m - 1.5) < 0.001 ? '500' : String(Math.round(333 * m))
+        this.el('out-salt').textContent = this.fmtNum(Math.round(3 * m * 10) / 10)
+        this.el('out-mult').textContent = this.fmtMult(m)
+        this.el('out-interp').textContent = onStop ? '' : ' interpolated'
+        this.el('out-stop').textContent = onStop ? 'fixed stop' : 'between stops'
+        this.el('breakdown').textContent =
+          't_ad ' + this.fmtTime(x.ad) +
+          '  +  t_cold 1:54' +
+          '  +  t_vol ' + this.fmtTime(x.vol) +
+          '  +  t_die ' + this.fmtSigned(x.die) +
+          '  +  t_geom ' + this.fmtSigned(x.geom) +
+          '  =  ' + this.fmtTime(x.t)
+        document.querySelectorAll('.tick').forEach(tick => {
+          tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - m) < 0.08)
+        })
+      },
+      buildTicks() {
+        const wrap = this.el('ticks')
+        wrap.replaceChildren()
+        this.stops.forEach(s => {
+          const btn = document.createElement('button')
+          btn.type = 'button'
+          btn.className = 'tick'
+          btn.dataset.stop = String(s)
+          btn.textContent = s === Math.floor(s) ? s + '×' : String(s).replace('.', ',') + '×'
+          btn.style.left = ((s - 1) / 5 * 100) + '%'
+          btn.addEventListener('click', () => {
+            this.el('mult').value = String(s)
+            this.update()
+          })
+          wrap.appendChild(btn)
+        })
+      }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cooker.buildTicks()
+      cooker.el('pasta').addEventListener('change', () => cooker.update())
+      cooker.el('mult').addEventListener('input', () => cooker.update())
+      cooker.el('mult').addEventListener('change', () => cooker.snap())
+      cooker.update()
+    })
   </script>
 </body>
 </html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microwave Pasta Cooker · Portion Slider</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <style>
+    :root {
+      --bg: #faf7f2;
+      --card: #ffffff;
+      --ink: #2c2416;
+      --muted: #6b5e4a;
+      --accent: #c45c26;
+      --accent-soft: #f4e6d8;
+      --border: #e8dfd0;
+      --header-bg: #2c2416;
+      --track: #e8dfd0;
+      --thumb: #c45c26;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.4rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 0.4rem;
+    }
+    .subtitle {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 40rem;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(44,36,22,0.06);
+      padding: 1.4rem 1.3rem;
+      margin-bottom: 1.25rem;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      margin-bottom: 0.85rem;
+    }
+    label.field {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+    }
+    select {
+      width: 100%;
+      appearance: none;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b5e4a' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 1rem center;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 2.4rem 0.75rem 0.9rem;
+      font: 500 1rem Inter, system-ui, sans-serif;
+      color: var(--ink);
+    }
+    select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .pasta-note {
+      margin-top: 0.45rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .readout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr;
+      gap: 0.7rem;
+      margin-bottom: 1.3rem;
+    }
+    .stat {
+      background: #f8f4ec;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.85rem 0.75rem;
+      text-align: center;
+    }
+    .stat.primary {
+      background: var(--header-bg);
+      color: #faf7f2;
+      border-color: var(--header-bg);
+    }
+    .stat .label {
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 0.2rem;
+    }
+    .stat .value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat .unit {
+      display: block;
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      opacity: 0.8;
+      margin-top: 0.15rem;
+    }
+    .slider-wrap { padding: 0.2rem 0.15rem 0.4rem; }
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.55rem;
+    }
+    .mult {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+    .mult-sub { font-size: 0.8rem; color: var(--muted); }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--track);
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--thumb);
+      border: 3px solid #fff;
+      box-shadow: 0 1px 6px rgba(44,36,22,0.25);
+      cursor: grab;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--thumb);
+      border: 3px solid #fff;
+      box-shadow: 0 1px 6px rgba(44,36,22,0.25);
+      cursor: grab;
+    }
+    .ticks {
+      position: relative;
+      height: 2.1rem;
+      margin-top: 0.35rem;
+    }
+    .tick {
+      position: absolute;
+      transform: translateX(-50%);
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      background: none;
+      border: 0;
+      font-family: inherit;
+    }
+    .tick::before {
+      content: "";
+      display: block;
+      width: 2px;
+      height: 8px;
+      background: #c4b59a;
+      margin: 0 auto 0.2rem;
+    }
+    .tick.active { color: var(--accent); }
+    .tick.active::before { background: var(--accent); }
+    .flex-note {
+      margin-top: 0.7rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .howto ol {
+      padding-left: 1.2rem;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+    .howto li { margin-bottom: 0.45rem; }
+    .howto li strong { color: var(--ink); }
+    .formula-box {
+      background: #f8f4ec;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      font-size: 0.9rem;
+    }
+    .formula-box code {
+      background: #efe8dc;
+      padding: 0.12rem 0.4rem;
+      border-radius: 4px;
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 0.86em;
+    }
+    .formula-box ul {
+      margin: 0.55rem 0 0 1.15rem;
+      color: var(--muted);
+    }
+    .notes {
+      font-size: 0.84rem;
+      color: var(--muted);
+      background: var(--accent-soft);
+      border: 1px solid #edd9c4;
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+      display: grid;
+      gap: 0.55rem;
+    }
+    .notes strong { color: var(--ink); }
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+    @media (max-width: 640px) {
+      .readout { grid-template-columns: 1fr 1fr; }
+      .stat .value { font-size: 1.55rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" x-data="cooker()">
+    <header>
+      <div class="eyebrow">Microwave Pasta Cooker</div>
+      <h1>Portion Slider</h1>
+      <p class="subtitle">LG NeoChef MH6535 · 1000&nbsp;W microwave mode · 83&nbsp;g pasta + 333&nbsp;ml water per unit · times in 10&nbsp;s steps</p>
+    </header>
+
+    <div class="card">
+      <label class="field" for="pasta">Pasta</label>
+      <select id="pasta" x-model="pastaId">
+        <optgroup label="Premium &amp; bronze-cut">
+          <template x-for="p in pastas.filter(p => p.group === 'premium')" :key="p.id">
+            <option :value="p.id" x-text="p.name"></option>
+          </template>
+        </optgroup>
+        <optgroup label="Everyday classics">
+          <template x-for="p in pastas.filter(p => p.group === 'classic')" :key="p.id">
+            <option :value="p.id" x-text="p.name"></option>
+          </template>
+        </optgroup>
+      </select>
+      <p class="pasta-note" x-text="current.note"></p>
+    </div>
+
+    <div class="card">
+      <div class="readout">
+        <div class="stat primary">
+          <div class="label">Cook time</div>
+          <div class="value" x-text="fmtTime(cookMinutes)"></div>
+          <span class="unit">al dente start · 10 s steps</span>
+        </div>
+        <div class="stat">
+          <div class="label">Pasta</div>
+          <div class="value" x-text="fmtNum(pastaG)"></div>
+          <span class="unit">g dry</span>
+        </div>
+        <div class="stat">
+          <div class="label">Water</div>
+          <div class="value" x-text="fmtNum(waterMl)"></div>
+          <span class="unit">ml cold tap</span>
+        </div>
+        <div class="stat">
+          <div class="label">Salt</div>
+          <div class="value" x-text="fmtSalt(saltG)"></div>
+          <span class="unit">g ≈ 9 g/L</span>
+        </div>
+      </div>
+
+      <div class="slider-wrap">
+        <div class="slider-head">
+          <div>
+            <span class="mult" x-text="fmtMult(mult)"></span>
+            <span class="mult-sub" x-show="!isStop" style="margin-left:.35rem">interpolated</span>
+          </div>
+          <div class="mult-sub" x-text="isStop ? 'fixed stop' : 'between stops'"></div>
+        </div>
+        <input
+          type="range"
+          min="1"
+          max="6"
+          step="0.02"
+          x-model.number="mult"
+          @change="maybeSnap()"
+          :aria-valuetext="fmtMult(mult)"
+        >
+        <div class="ticks">
+          <template x-for="s in stops" :key="s">
+            <button
+              type="button"
+              class="tick"
+              :class="{ active: near(mult, s) }"
+              :style="'left:' + pos(s) + '%'"
+              @click="mult = s"
+              x-text="labelStop(s)"
+            ></button>
+          </template>
+        </div>
+        <p class="flex-note">Stops at 1× · 1.5× · 2× · 3× · 4× · 5× · 6×. Drag freely between them; pasta, water and salt interpolate. Cook time interpolates and snaps to the nearest 10&nbsp;s. Releasing within 0.08 of a stop snaps the multiplier to it.</p>
+      </div>
+    </div>
+
+    <div class="card howto">
+      <h2>How to use</h2>
+      <ol>
+        <li><strong>Pasta first</strong> — Place the measured dry pasta in the cooker.</li>
+        <li><strong>Cold water</strong> — Add the shown volume. Pasta must be fully covered.</li>
+        <li><strong>Salt</strong> — Add the matching salt (≈ 9&nbsp;g per litre).</li>
+        <li><strong>Stir once</strong> — Cook <strong>uncovered</strong> on 1000&nbsp;W (High / P-HI).</li>
+        <li><strong>Mid-cook stir</strong> — Halfway through, open carefully and stir (especially long pasta).</li>
+        <li><strong>Test early</strong> — Check 10&nbsp;s before the displayed time. Add 10&nbsp;s steps to al dente.</li>
+        <li><strong>Drain</strong> — Use the strainer lid. Stand 1&nbsp;min for better texture.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>Algorithm</h2>
+      <div class="formula-box">
+        Fitted for LG NeoChef MH6535 at 1000&nbsp;W, cold tap ≈ 15&nbsp;°C, uncovered cooker.
+        <br><br>
+        <code>t = t_ad + t_cold + t_vol(m) + t_die + t_geom</code>
+        <ul>
+          <li><code>t_ad</code> — package al dente time (min)</li>
+          <li><code>t_cold = 1.90</code> — cold-start for the first 333&nbsp;ml at 1000&nbsp;W</li>
+          <li><code>t_vol(m) = 2.05·(m−1) + 0.08·(m−1)²</code> — extra water mass (linear heat capacity + mild quadratic for uneven large loads)</li>
+          <li><code>t_die = 0.40</code> if bronze-cut, else 0</li>
+          <li><code>t_geom</code> — +0.25 long shapes · +0.15 thick/hollow · −0.15 very thin</li>
+        </ul>
+        Result rounded to the nearest 10&nbsp;s. Live breakdown for this setting:
+        <p style="margin-top:.7rem" x-text="breakdown"></p>
+      </div>
+    </div>
+
+    <div class="notes">
+      <p><strong>Important</strong> · Cold tap water only · 1000&nbsp;W microwave mode only (no grill / combination) · No oil · Contents are very hot.</p>
+      <p>Displayed times are al dente starting points. Bronze-cut pastas sit on the high side of the generic offset. 5× and 6× approach the practical limit of most microwave pasta cookers — stir well and keep pasta covered.</p>
+      <p>1.5× water is rounded to 500&nbsp;ml. Other volumes are exact multiples of 333&nbsp;ml. Salt stays 3&nbsp;g per unit.</p>
+    </div>
+
+    <footer>
+      Metric only · Microwave spaghetti maker · Ninja Foodi Max AF400EU · Ninja Woodfire OO101EU · LG NeoChef MH6535
+    </footer>
+  </div>
+
+  <script>
+    function cooker() {
+      const stops = [1, 1.5, 2, 3, 4, 5, 6];
+      const pastas = [
+        { id: 'spaghettoni-bronzo', group: 'premium', name: 'Barilla Spaghettoni al Bronzo', note: 'Package 12:00 · al dente 11:00 · bronze, thick long', ad: 11, bronze: true, geom: 0.25 },
+        { id: 'spaghetti-bronzo', group: 'premium', name: 'Barilla Spaghetti al Bronzo', note: 'Package 11:00 · al dente 10:00 · bronze, long', ad: 10, bronze: true, geom: 0.25 },
+        { id: 'rey-n3', group: 'premium', name: 'Pasta Rey Spaghetti n.3', note: 'Package ~9:00 · al dente 8:00 · bronze, thin long', ad: 8, bronze: true, geom: -0.15 },
+        { id: 'rey-n5', group: 'premium', name: 'Pasta Rey Spaghetti n.5', note: 'Package ~10:00 · al dente 9:30 · bronze, long', ad: 9.5, bronze: true, geom: 0.25 },
+        { id: 'rey-linguine', group: 'premium', name: 'Pasta Rey Linguine', note: 'Package ~10:30 · al dente 10:00 · bronze, flat long', ad: 10, bronze: true, geom: 0.25 },
+        { id: 'fettuccia', group: 'premium', name: 'De Cecco Fettuccia n.150', note: 'Package 12:00 · al dente 10:00 · bronze, flat long', ad: 10, bronze: true, geom: 0.25 },
+        { id: 'fusilli-lunghi', group: 'premium', name: 'De Cecco Fusilli Lunghi Bucati n.5', note: 'Package 13:00 · al dente 12:00 · bronze, hollow long', ad: 12, bronze: true, geom: 0.25 },
+        { id: 'orecchiette', group: 'premium', name: 'De Cecco Orecchiette n.91', note: 'Package 11:00 · al dente 9:00 · bronze, thick short', ad: 9, bronze: true, geom: 0.15 },
+        { id: 'spaghetti', group: 'classic', name: 'Spaghetti (standard)', note: 'Typical package 9–11 min · al dente 9:30', ad: 9.5, bronze: false, geom: 0.25 },
+        { id: 'linguine', group: 'classic', name: 'Linguine', note: 'Typical package 9–11 min · al dente 9:30', ad: 9.5, bronze: false, geom: 0.25 },
+        { id: 'penne', group: 'classic', name: 'Penne', note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
+        { id: 'fusilli', group: 'classic', name: 'Fusilli / Rotini', note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
+        { id: 'farfalle', group: 'classic', name: 'Farfalle (bow-ties)', note: 'Typical package 11–12 min · al dente 11:00', ad: 11, bronze: false, geom: 0 },
+        { id: 'macaroni', group: 'classic', name: 'Macaroni / Elbows', note: 'Typical package 8–10 min · al dente 8:00', ad: 8, bronze: false, geom: 0 },
+        { id: 'rigatoni', group: 'classic', name: 'Rigatoni', note: 'Typical package 12–13 min · al dente 12:00', ad: 12, bronze: false, geom: 0.15 },
+        { id: 'angel', group: 'classic', name: 'Angel hair / Capellini', note: 'Typical package 3–5 min · al dente 4:00 · very thin', ad: 4, bronze: false, geom: -0.15 }
+      ];
+
+      return {
+        pastas,
+        stops,
+        pastaId: 'spaghetti-bronzo',
+        mult: 1,
+        get current() {
+          return this.pastas.find(p => p.id === this.pastaId) || this.pastas[0];
+        },
+        get pastaG() { return Math.round(83 * this.mult * 10) / 10; },
+        get waterMl() {
+          if (Math.abs(this.mult - 1.5) < 0.001) return 500;
+          return Math.round(333 * this.mult);
+        },
+        get saltG() { return Math.round(3 * this.mult * 10) / 10; },
+        get cookMinutes() { return this.compute(this.mult).t; },
+        get breakdown() {
+          const x = this.compute(this.mult);
+          return 't_ad ' + this.fmtTime(x.ad)
+            + '  +  t_cold 1:54'
+            + '  +  t_vol ' + this.fmtTime(x.vol)
+            + '  +  t_die ' + this.fmtSigned(x.die)
+            + '  +  t_geom ' + this.fmtSigned(x.geom)
+            + '  =  ' + this.fmtTime(x.t);
+        },
+        get isStop() { return this.stops.some(s => Math.abs(this.mult - s) < 0.001); },
+        compute(m) {
+          const p = this.current;
+          const dm = Math.max(0, m - 1);
+          const vol = 2.05 * dm + 0.08 * dm * dm;
+          const die = p.bronze ? 0.40 : 0;
+          const geom = p.geom || 0;
+          const t = p.ad + 1.90 + vol + die + geom;
+          return { ad: p.ad, vol, die, geom, t };
+        },
+        maybeSnap() {
+          const hit = this.stops.find(s => Math.abs(this.mult - s) <= 0.08);
+          if (hit != null) this.mult = hit;
+        },
+        near(m, s) { return Math.abs(m - s) < 0.08; },
+        pos(s) { return ((s - 1) / 5) * 100; },
+        labelStop(s) { return s === Math.floor(s) ? s + '×' : s.toString().replace('.', ',') + '×'; },
+        fmtMult(m) {
+          const v = Math.round(m * 20) / 20;
+          return (Number.isInteger(v) ? String(v) : v.toFixed(2).replace(/0$/, '').replace('.', ',')) + '×';
+        },
+        fmtTime(min) {
+          const secs = Math.max(0, Math.round((min * 60) / 10) * 10);
+          const mm = Math.floor(secs / 60);
+          const ss = secs % 60;
+          return mm + ':' + String(ss).padStart(2, '0');
+        },
+        fmtSigned(min) {
+          const sign = min < 0 ? '−' : '';
+          return sign + this.fmtTime(Math.abs(min));
+        },
+        fmtNum(n) {
+          return Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
+        },
+        fmtSalt(n) {
+          return (Math.round(n * 10) / 10).toString().replace('.', ',');
+        }
+      };
+    }
+  </script>
+</body>
+</html>

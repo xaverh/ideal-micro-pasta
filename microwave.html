@@ -349,12 +349,12 @@
             <label class="field" for="manual-geom" style="margin:0">Geometry</label>
             <span class="mult-sub" id="manual-geom-out">long +0:15</span>
           </div>
-          <input id="manual-geom" type="range" min="-0.15" max="0.25" step="0.05" value="0.25">
+          <input id="manual-geom" type="range" min="-0.20" max="0.40" step="0.05" value="0.25">
           <div class="geom-ticks">
-            <span style="left:0%">thin</span>
-            <span style="left:37.5%">short</span>
-            <span style="left:75%">thick</span>
-            <span style="left:100%">long</span>
+            <span style="left:8.3%">-0.15 thin</span>
+            <span style="left:33.3%">0 short</span>
+            <span style="left:58.3%">0.15 thick</span>
+            <span style="left:75%">0.25 long</span>
           </div>
         </div>
       </div>
@@ -416,13 +416,16 @@
       <div class="formula-box">
         Fitted for LG NeoChef MH6535 at 1000&nbsp;W, cold tap ≈ 15&nbsp;°C, uncovered cooker.
         <br><br>
-        <code>t = t_ad + t_cold + t_vol(m) + t_die + t_geom</code>
+        <code>t = t_ad + (1 − γ) · t_heat + t_die + t_geom</code>
         <ul>
-          <li><code>t_ad</code> — package al dente time (min)</li>
-          <li><code>t_cold = 1.90</code> — cold-start for the first 333&nbsp;ml at 1000&nbsp;W</li>
-          <li><code>t_vol(m) = 2.05·(m−1) + 0.08·(m−1)²</code> — extra water mass</li>
-          <li><code>t_die = 0.40</code> if bronze-cut, else 0</li>
-          <li><code>t_geom</code> — +0.25 long · +0.15 thick/hollow · −0.15 very thin</li>
+          <li><code>t_ad</code> — package al dente (min), after a rolling boil</li>
+          <li><code>t_heat = (V·c_w·ΔT_w + m_p·c_p·ΔT_p) / P_eff</code></li>
+          <li><code>c_w = 4.184 J/g·K</code>, <code>ΔT_w = 82 K</code> (15 °C tap → ~97 °C)</li>
+          <li><code>c_p = 1.8 J/g·K</code>, <code>ΔT_p = 70 K</code> (dry pasta + early soak)</li>
+          <li><code>P_eff = 650 W</code> (1000 W rating, ~65% coupling in a deep cooker)</li>
+          <li><code>γ = 0.36</code> — share of heat-up that already gelatinizes starch</li>
+          <li><code>t_die = 0.30</code> min if bronze-cut (slower hydration, less agitation)</li>
+          <li><code>t_geom</code> — built-ins use −0.15 / 0 / 0.15 / 0.25 min</li>
         </ul>
         Result rounded to the nearest 10&nbsp;s.
         <p style="margin-top:.7rem" id="breakdown"></p>
@@ -470,23 +473,30 @@
       },
       fmtMult(m) {
         const v = Math.round(m * 50) / 50
-        return (Number.isInteger(v) ? String(v) : String(v).replace('.', ',')) + '×'
+        return (Number.isInteger(v) ? String(v) : v.toFixed(2).replace(/0$/, '')) + '×'
       },
       fmtNum(n) {
-        return Number.isInteger(n) ? String(n) : String(n).replace('.', ',')
+        return Number.isInteger(n) ? String(n) : String(n)
+      },
+      fmtMin(min) {
+        const sign = min < 0 ? '−' : '+'
+        return sign + Math.abs(min).toFixed(2)
       },
       compute(m, pasta) {
-        const dm = Math.max(0, m - 1)
-        const vol = 2.05 * dm + 0.08 * dm * dm
-        const die = pasta.bronze ? 0.40 : 0
+        const pastaG = 83 * m
+        const waterG = Math.abs(m - 1.5) < 0.001 ? 500 : 333 * m
+        const tHeat = (waterG * 4.184 * 82 + pastaG * 1.8 * 70) / 650 / 60
+        const load = (1 - 0.36) * tHeat
+        const die = pasta.bronze ? 0.30 : 0
         const geom = pasta.geom || 0
-        return { ad: pasta.ad, vol, die, geom, t: pasta.ad + 1.90 + vol + die + geom }
+        return { ad: pasta.ad, load, tHeat, die, geom, t: pasta.ad + load + die + geom }
       },
       geomLabel(g) {
-        if (g <= -0.10) return 'very thin ' + this.fmtSigned(g)
-        if (g < 0.08) return 'short ' + this.fmtSigned(g)
-        if (g < 0.22) return 'thick / hollow ' + this.fmtSigned(g)
-        return 'long ' + this.fmtSigned(g)
+        let kind = 'short'
+        if (g <= -0.10) kind = 'very thin'
+        else if (g >= 0.22) kind = 'long'
+        else if (g >= 0.08) kind = 'thick / hollow'
+        return kind + ' ' + this.fmtMin(g) + ' min'
       },
       seedManual(pasta) {
         this.el('manual-ad').value = String(Math.round(pasta.ad * 60 / 10) * 10)
@@ -538,10 +548,9 @@
         this.el('out-stop').textContent = onStop ? 'fixed stop' : 'between stops'
         this.el('breakdown').textContent =
           't_ad ' + this.fmtTime(x.ad) +
-          '  +  t_cold 1:54' +
-          '  +  t_vol ' + this.fmtTime(x.vol) +
-          '  +  t_die ' + this.fmtSigned(x.die) +
-          '  +  t_geom ' + this.fmtSigned(x.geom) +
+          '  +  (1-γ)t_heat ' + this.fmtTime(x.load) +
+          '  +  t_die ' + this.fmtMin(x.die) +
+          '  +  t_geom ' + this.fmtMin(x.geom) +
           '  =  ' + this.fmtTime(x.t)
         document.querySelectorAll('.tick').forEach(tick => {
           tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - m) < 0.08)
@@ -555,7 +564,7 @@
           btn.type = 'button'
           btn.className = 'tick'
           btn.dataset.stop = String(s)
-          btn.textContent = s === Math.floor(s) ? s + '×' : String(s).replace('.', ',') + '×'
+          btn.textContent = s === Math.floor(s) ? s + '×' : s + '×'
           btn.style.left = ((s - 1) / 5 * 100) + '%'
           btn.addEventListener('click', () => {
             this.el('mult').value = String(s)

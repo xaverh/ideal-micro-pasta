@@ -4,12 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Microwave Pasta Cooker · Portion Slider</title>
-  <script>
-    (function () {
-      var t = localStorage.getItem('theme')
-      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t)
-    })()
-  </script>
   <style>
     :root {
       --bg: #FFFFFF;
@@ -27,7 +21,7 @@
       --serif: "Times New Roman", Times, TimesNR, serif;
     }
     @media (prefers-color-scheme: dark) {
-      :root:not([data-theme]) {
+      :root {
         --bg: #121212;
         --card: #1c1c1c;
         --ink: #D0D0D0;
@@ -41,36 +35,6 @@
         --thumb: #D0D0D0;
         --stat: #262626;
       }
-    }
-    html[data-theme="light"] {
-      --bg: #FFFFFF;
-      --card: #FFFFFF;
-      --ink: #080808;
-      --muted: #767676;
-      --accent: #3E3D32;
-      --accent-soft: #D0D0D0;
-      --border: #C6C6C6;
-      --header-bg: #3E3D32;
-      --header-fg: #FFFFFF;
-      --track: #C6C6C6;
-      --thumb: #080808;
-      --stat: #D0D0D0;
-      color-scheme: light;
-    }
-    html[data-theme="dark"] {
-      --bg: #121212;
-      --card: #1c1c1c;
-      --ink: #D0D0D0;
-      --muted: #767676;
-      --accent: #D0D0D0;
-      --accent-soft: #262626;
-      --border: #3E3D32;
-      --header-bg: #D0D0D0;
-      --header-fg: #121212;
-      --track: #3E3D32;
-      --thumb: #D0D0D0;
-      --stat: #262626;
-      color-scheme: dark;
     }
     html { color-scheme: light dark; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,29 +53,6 @@
       margin-bottom: 2rem;
       padding-bottom: 1.4rem;
       border-bottom: 2px solid var(--border);
-      position: relative;
-    }
-    .theme-toggle {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 2.4rem;
-      height: 2.4rem;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--ink);
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-    }
-    .theme-toggle svg { width: 1.15rem; height: 1.15rem; display: block; }
-    html[data-theme="dark"] .icon-sun,
-    :root:not([data-theme]) .icon-sun { display: none; }
-    html[data-theme="light"] .icon-moon { display: none; }
-    @media (prefers-color-scheme: light) {
-      :root:not([data-theme]) .icon-moon { display: none; }
-      :root:not([data-theme]) .icon-sun { display: block; }
     }
     .eyebrow {
       font-size: 0.75rem;
@@ -390,17 +331,6 @@
 <body>
   <div class="container">
     <header>
-      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
-        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M15.5 2.1A10 10 0 1 0 21.9 15.5 8 8 0 0 1 15.5 2.1z"/>
-        </svg>
-        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="4" fill="currentColor"/>
-          <g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none">
-            <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>
-          </g>
-        </svg>
-      </button>
       <div class="eyebrow">Microwave Pasta Cooker</div>
       <h1>Portion Slider</h1>
       <p class="subtitle">LG NeoChef MH6535 · 1000&nbsp;W microwave mode · pasta 83–333&nbsp;g · water linked by a non-linear curve, then adjustable · times in 10&nbsp;s steps</p>
@@ -457,20 +387,20 @@
           </div>
           <input id="manual-geom" type="range" min="-0.25" max="0.25" step="0.05" value="0.25">
           <div class="geom-ticks">
-            <button type="button" style="left:0%" data-geom="-0.25" title="very thin -0.25" aria-label="very thin">
-              <svg viewBox="0 0 22 14" aria-hidden="true"><path d="M1 7h20" fill="none" stroke="currentColor" stroke-width="0.9"/></svg>
+            <button type="button" style="left:0%" data-geom="-0.25" title="very thin -0.25">
+              <svg viewBox="0 0 22 14"><path d="M1 7h20" fill="none" stroke="currentColor" stroke-width="0.9"/></svg>
             </button>
-            <button type="button" style="left:20%" data-geom="-0.15" title="thin long -0.15" aria-label="thin long">
-              <svg viewBox="0 0 22 14" aria-hidden="true"><path d="M1 7h20" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+            <button type="button" style="left:20%" data-geom="-0.15" title="thin long -0.15">
+              <svg viewBox="0 0 22 14"><path d="M1 7h20" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
             </button>
-            <button type="button" style="left:50%" data-geom="0" title="short 0" aria-label="short">
-              <svg viewBox="0 0 22 14" aria-hidden="true"><rect x="6" y="4" width="10" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+            <button type="button" style="left:50%" data-geom="0" title="short 0">
+              <svg viewBox="0 0 22 14"><rect x="6" y="4" width="10" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
             </button>
-            <button type="button" style="left:80%" data-geom="0.15" title="thick / hollow +0.15" aria-label="thick hollow">
-              <svg viewBox="0 0 22 14" aria-hidden="true"><rect x="5" y="3" width="12" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7h6" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+            <button type="button" style="left:80%" data-geom="0.15" title="thick / hollow +0.15">
+              <svg viewBox="0 0 22 14"><rect x="5" y="3" width="12" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7h6" fill="none" stroke="currentColor" stroke-width="1"/></svg>
             </button>
-            <button type="button" style="left:100%" data-geom="0.25" title="long +0.25" aria-label="long">
-              <svg viewBox="0 0 22 14" aria-hidden="true"><path d="M2 8c3-4 5 4 8 0s5 4 8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <button type="button" style="left:100%" data-geom="0.25" title="long +0.25">
+              <svg viewBox="0 0 22 14"><path d="M2 8c3-4 5 4 8 0s5 4 8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
             </button>
           </div>
           <div class="geom-help">
@@ -784,14 +714,6 @@
           cooker.el('manual-geom').value = btn.dataset.geom
           cooker.update()
         })
-      })
-      cooker.el('theme-toggle').addEventListener('click', () => {
-        const root = document.documentElement
-        const now = root.getAttribute('data-theme')
-          || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        const next = now === 'dark' ? 'light' : 'dark'
-        root.setAttribute('data-theme', next)
-        localStorage.setItem('theme', next)
       })
       cooker._lastId = cooker.el('pasta').value
       cooker.update()

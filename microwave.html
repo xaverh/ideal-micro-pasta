@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Microwave Pasta Cooker · Portion Slider</title>
+  <title>Microwave Pasta &amp; Rice Cooker</title>
   <style>
     :root {
       --bg: #FFFFFF;
@@ -76,6 +76,30 @@
       max-width: 40rem;
       margin: 0 auto;
     }
+    .mode-switch {
+      display: flex;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+    .mode-switch button {
+      font: 600 0.82rem var(--serif);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+    }
+    .mode-switch button.on {
+      background: var(--header-bg);
+      color: var(--header-fg);
+      border-color: var(--header-bg);
+    }
+    .mode-pasta .rice-only { display: none; }
+    .mode-rice .pasta-only { display: none; }
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -332,16 +356,20 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container mode-pasta" id="app">
     <header>
-      <div class="eyebrow">Microwave Pasta Cooker</div>
+      <div class="eyebrow" id="eyebrow">Microwave Pasta Cooker</div>
       <h1>Portion Slider</h1>
-      <p class="subtitle">LG NeoChef MH6535 · 1000&nbsp;W microwave mode · pasta 83–333&nbsp;g · water linked by a non-linear curve, then adjustable · times in 10&nbsp;s steps</p>
+      <p class="subtitle" id="subtitle">LG NeoChef MH6535 · 1000&nbsp;W microwave mode · pasta 83–333&nbsp;g · water linked by a non-linear curve, then adjustable · times in 10&nbsp;s steps</p>
+      <div class="mode-switch">
+        <button type="button" id="mode-pasta" class="on">Pasta</button>
+        <button type="button" id="mode-rice">Rice</button>
+      </div>
     </header>
 
     <div class="card">
-      <label class="field" for="pasta">Pasta</label>
-      <select id="pasta">
+      <label class="field pasta-only" for="pasta">Pasta</label>
+      <select id="pasta" class="pasta-only">
         <optgroup label="Premium &amp; bronze-cut">
           <option value="spaghettoni-bronzo">Barilla Spaghettoni al Bronzo</option>
           <option value="spaghetti-bronzo" selected>Barilla Spaghetti al Bronzo</option>
@@ -366,9 +394,15 @@
           <option value="manual">Manual</option>
         </optgroup>
       </select>
+      <label class="field rice-only" for="rice">Rice</label>
+      <select id="rice" class="rice-only">
+        <option value="jasmine" selected>Deer Brand Extra Fancy Jasmine (Thailand)</option>
+        <option value="koshihikari">Shiro Koshihikari Sushi Rice</option>
+        <option value="basmati">Daawat Extra Long Basmati</option>
+      </select>
       <p class="pasta-note" id="pasta-note"></p>
 
-      <div class="manual" id="manual">
+      <div class="manual pasta-only" id="manual">
         <div class="manual-row">
           <div class="slider-head">
             <label class="field" for="manual-pkg" style="margin:0">Package cottura</label>
@@ -425,12 +459,12 @@
         <div class="stat primary">
           <div class="label">Cook time</div>
           <div class="value" id="out-time">13:10</div>
-          <span class="unit">al dente start · 10 s steps</span>
+          <span class="unit" id="out-time-unit">al dente start · 10 s steps</span>
         </div>
         <div class="stat">
-          <div class="label">Pasta</div>
+          <div class="label" id="lbl-grain">Pasta</div>
           <div class="value" id="out-pasta">83</div>
-          <span class="unit">g dry</span>
+          <span class="unit" id="unit-grain">g dry</span>
         </div>
         <div class="stat">
           <div class="label">Water</div>
@@ -438,20 +472,20 @@
           <span class="unit">ml cold tap</span>
         </div>
         <div class="stat">
-          <div class="label">Salt</div>
+          <div class="label" id="lbl-salt">Salt</div>
           <div class="value" id="out-salt">3</div>
-          <span class="unit">g ≈ 9 g/L</span>
+          <span class="unit" id="unit-salt">g ≈ 9 g/L</span>
         </div>
       </div>
 
       <div class="slider-wrap">
         <div class="slider-head">
-          <label class="field" for="pasta-g" style="margin:0">Pasta</label>
+          <label class="field" for="pasta-g" id="lbl-grain-slider" style="margin:0">Pasta</label>
           <span class="mult" id="out-mult">83 g</span>
         </div>
         <input id="pasta-g" type="range" min="83" max="333" step="0.5" value="83">
         <div class="ticks" id="pasta-ticks"></div>
-        <p class="flex-note">Stops at 83 · 124.5 · 166 · 249 · 333&nbsp;g. Max fill is 333&nbsp;g. Moving pasta resets water to the linked curve.</p>
+        <p class="flex-note" id="grain-note">Stops at 83 · 124.5 · 166 · 249 · 333&nbsp;g. Max fill is 333&nbsp;g. Moving pasta resets water to the linked curve.</p>
       </div>
 
       <div class="slider-wrap">
@@ -461,11 +495,11 @@
         </div>
         <input id="water-ml" type="range" min="250" max="1200" step="1" value="333">
         <div class="ticks" id="water-ticks"></div>
-        <p class="flex-note">Linked anchors: 83&nbsp;g → 333&nbsp;ml · 166&nbsp;g → 666&nbsp;ml · 333&nbsp;g → 1000&nbsp;ml. Drag water off the curve for a custom volume.</p>
+        <p class="flex-note" id="water-note">Linked anchors: 83&nbsp;g → 333&nbsp;ml · 166&nbsp;g → 666&nbsp;ml · 333&nbsp;g → 1000&nbsp;ml. Drag water off the curve for a custom volume.</p>
       </div>
     </div>
 
-    <div class="card howto">
+    <div class="card howto pasta-only">
       <h2>How to use</h2>
       <ol>
         <li><strong>Pasta first</strong> — Place the measured dry pasta in the cooker.</li>
@@ -478,7 +512,20 @@
       </ol>
     </div>
 
-    <div class="card">
+    <div class="card howto rice-only">
+      <h2>How to use</h2>
+      <ol>
+        <li><strong>Measure</strong> — 1 Reishunger becher ≈ 150&nbsp;g dry rice (2 portions). Max 450&nbsp;g (3 becher).</li>
+        <li><strong>Rinse</strong> — Jasmine and basmati twice; koshihikari 3–4 times until the water is only faintly cloudy. Drain well.</li>
+        <li><strong>Water</strong> — Add the shown cold tap water. Optional 10&nbsp;min soak for Daawat basmati, then cook in the same water.</li>
+        <li><strong>Salt</strong> — Jasmine and basmati: the shown pinch. Koshihikari: none in the cooker (season after with sushi-zu).</li>
+        <li><strong>Lid on</strong> — Close the rice cooker so the lid vents can circulate steam. Never run it dry.</li>
+        <li><strong>1000&nbsp;W</strong> — High / P-HI on the LG NeoChef. Lid on, no grill. Glance once that water remains.</li>
+        <li><strong>Rest</strong> — Leave the lid on for the shown rest. Then fluff with the paddle.</li>
+      </ol>
+    </div>
+
+    <div class="card pasta-only">
       <h2>Algorithm</h2>
       <div class="formula-box">
         Fitted for LG NeoChef MH6535 at 1000&nbsp;W, cold tap ≈ 15&nbsp;°C, uncovered cooker.
@@ -499,14 +546,38 @@
       </div>
     </div>
 
-    <div class="notes">
+    <div class="card rice-only">
+      <h2>Algorithm</h2>
+      <div class="formula-box">
+        Fitted to the Reishunger microwave rice cooker (model 546-W) at 1000&nbsp;W on the LG NeoChef, lid on, plus variety offsets. Booklet times were 750–800&nbsp;W; heat-up is scaled to 1000&nbsp;W, gelatinization time is only trimmed slightly.
+        <br><br>
+        <code>t = t_gel + (1 − γ) · t_heat + t_bulk</code>
+        <ul>
+          <li><code>t_gel</code> — time at cooking temperature: jasmine 8.5 · basmati 9.5 · koshihikari 10.0 min</li>
+          <li><code>t_heat = (V·c_w·ΔT_w) / P_eff</code> with <code>P_eff = 650 W</code> at 1000&nbsp;W High</li>
+          <li><code>γ = 0.22</code> — steam under the lid already cooks during heat-up</li>
+          <li><code>t_bulk = 0.35·(n−1)²</code> min, <code>n = m_rice / 150 g</code> — crowding in the 1.7&nbsp;l cooker</li>
+          <li>Water follows the manual cup table (1→1.5, 2→3, 3→4) times a variety factor: jasmine 1.00 · basmati 1.08 · koshihikari 0.78</li>
+        </ul>
+        Result rounded to the nearest 10&nbsp;s. Then rest lid-on.
+        <p style="margin-top:.7rem" id="rice-breakdown"></p>
+      </div>
+    </div>
+
+    <div class="notes pasta-only">
       <p><strong>Important</strong> · Cold tap water only · 1000&nbsp;W microwave mode only (no grill / combination) · No oil · Contents are very hot.</p>
       <p>Displayed times are al dente starting points. Standard spaghetti uses 8:00 package cottura. Water is not a fixed multiple of pasta: 166&nbsp;g pairs with 666&nbsp;ml, 333&nbsp;g with 1&nbsp;l.</p>
       <p>Salt is 9&nbsp;g per litre of the chosen water. Keep pasta covered. Stir long shapes halfway.</p>
     </div>
 
+    <div class="notes rice-only">
+      <p><strong>Important</strong> · Reishunger microwave rice cooker · lid on · 1000&nbsp;W High · no grill · never dry-heat · steam is hot.</p>
+      <p>White rice only. The cooker is not meant for brown or whole-grain rice. Max 450&nbsp;g dry. There must always be free water during the cook.</p>
+      <p>1 becher = 150&nbsp;g ≈ 2 portions. Booklet at 800&nbsp;W was 10–13 / 13–15 / 17–19&nbsp;min; times here are the 1000&nbsp;W equivalent. Salt is 1&nbsp;g per 150&nbsp;g for jasmine and basmati, 0&nbsp;g for koshihikari.</p>
+    </div>
+
     <footer>
-      Metric only · Microwave spaghetti maker · Ninja Foodi Max AF400EU · Ninja Woodfire OO101EU · LG NeoChef MH6535 · vanilla JS
+      Metric only · Microwave spaghetti maker · Reishunger rice cooker 546-W · Ninja Foodi Max AF400EU · Ninja Woodfire OO101EU · LG NeoChef MH6535
     </footer>
   </div>
 
@@ -521,6 +592,35 @@
         { p: 333, w: 1000 }
       ],
       linkedWater: true,
+      mode: 'pasta',
+      riceStops: [75, 150, 225, 300, 450],
+      riceWaterStops: [210, 270, 540, 720],
+      rices: {
+        jasmine: {
+          name: 'Deer Brand Extra Fancy Jasmine',
+          note: 'Thai jasmine · rinse twice · no soak · lid on · rest 5 min',
+          gel: 8.5,
+          waterFactor: 1.00,
+          saltPer150: 1,
+          rest: 5
+        },
+        koshihikari: {
+          name: 'Shiro Koshihikari Sushi Rice',
+          note: 'Short grain · rinse 3–4 times · less water · no salt in the pot · rest 10 min',
+          gel: 10.0,
+          waterFactor: 0.78,
+          saltPer150: 0,
+          rest: 10
+        },
+        basmati: {
+          name: 'Daawat Extra Long Basmati',
+          note: 'Extra-long grain · rinse twice · optional 10 min soak · rest 8 min',
+          gel: 9.5,
+          waterFactor: 1.08,
+          saltPer150: 1,
+          rest: 8
+        }
+      },
       pastas: {
         'spaghettoni-bronzo': { note: 'Package 12:00 · bronze, long', pkg: 12, bronze: true, geom: 0.25 },
         'spaghetti-bronzo': { note: 'Package 11:00 · bronze, long', pkg: 11, bronze: true, geom: 0.25 },
@@ -544,7 +644,8 @@
         return Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0')
       },
       fmtNum(n) {
-        return String(Math.round(n * 10) / 10)
+        const r = Math.round(n * 10) / 10
+        return Number.isInteger(r) ? String(r) : String(r)
       },
       fmtMin(min) {
         const sign = min < 0 ? '−' : '+'
@@ -552,6 +653,23 @@
       },
       alDente(pkg) {
         return Math.max(pkg - 1, pkg * 0.75)
+      },
+      currentRice() {
+        return this.rices[this.el('rice').value] || this.rices.jasmine
+      },
+      waterForRice(g) {
+        const n = g / 150
+        let cups
+        if (n <= 2) cups = 1.5 * n
+        else cups = 3 + (n - 2) * 1
+        return 180 * cups * this.currentRice().waterFactor
+      },
+      computeRice(riceG, waterMl, rice) {
+        const tHeat = (waterMl * 4.184 * 82) / 650 / 60
+        const load = (1 - 0.22) * tHeat
+        const n = riceG / 150
+        const bulk = 0.35 * Math.max(0, n - 1) * Math.max(0, n - 1)
+        return { gel: rice.gel, load, bulk, t: rice.gel + load + bulk, rest: rice.rest }
       },
       waterForPasta(p) {
         const a = this.waterAnchors
@@ -606,20 +724,73 @@
       snapPasta() {
         const el = this.el('pasta-g')
         const v = Number(el.value)
-        const hit = this.pastaStops.find(s => Math.abs(v - s) <= 3)
+        const stops = this.mode === 'rice' ? this.riceStops : this.pastaStops
+        const tol = this.mode === 'rice' ? 8 : 3
+        const hit = stops.find(s => Math.abs(v - s) <= tol)
         if (hit != null) el.value = String(hit)
         this.linkedWater = true
-        this.el('water-ml').value = String(Math.round(this.waterForPasta(Number(el.value))))
         this.update()
       },
       snapWater() {
         const el = this.el('water-ml')
         const v = Number(el.value)
-        const hit = this.waterStops.find(s => Math.abs(v - s) <= 12)
+        const stops = this.mode === 'rice' ? this.riceWaterStops : this.waterStops
+        const hit = stops.find(s => Math.abs(v - s) <= 12)
         if (hit != null) el.value = String(hit)
         this.update()
       },
+      setMode(mode) {
+        this.mode = mode
+        this.linkedWater = true
+        const app = this.el('app')
+        app.classList.toggle('mode-pasta', mode === 'pasta')
+        app.classList.toggle('mode-rice', mode === 'rice')
+        this.el('mode-pasta').classList.toggle('on', mode === 'pasta')
+        this.el('mode-rice').classList.toggle('on', mode === 'rice')
+        const grain = this.el('pasta-g')
+        const water = this.el('water-ml')
+        if (mode === 'rice') {
+          grain.min = 75
+          grain.max = 450
+          grain.step = 1
+          grain.value = 150
+          water.min = 150
+          water.max = 900
+          this.buildTicks('pasta-ticks', this.riceStops, 75, 450, ' g', g => {
+            grain.value = String(g)
+            this.linkedWater = true
+            this.update()
+          })
+          this.buildTicks('water-ticks', this.riceWaterStops, 150, 900, ' ml', w => {
+            water.value = String(w)
+            this.linkedWater = false
+            this.update()
+          })
+        } else {
+          grain.min = 83
+          grain.max = 333
+          grain.step = 0.5
+          grain.value = 83
+          water.min = 250
+          water.max = 1200
+          this.buildTicks('pasta-ticks', this.pastaStops, 83, 333, ' g', g => {
+            grain.value = String(g)
+            this.linkedWater = true
+            this.update()
+          })
+          this.buildTicks('water-ticks', this.waterStops, 250, 1200, ' ml', w => {
+            water.value = String(w)
+            this.linkedWater = false
+            this.update()
+          })
+        }
+        this.update()
+      },
       update() {
+        if (this.mode === 'rice') {
+          this.updateRice()
+          return
+        }
         const manual = this.el('pasta').value === 'manual'
         this.el('manual').classList.toggle('open', manual)
         if (manual) {
@@ -641,13 +812,23 @@
         const waterMl = Number(this.el('water-ml').value)
         const pasta = this.currentPasta()
         const x = this.compute(pastaG, waterMl, pasta)
+        this.el('eyebrow').textContent = 'Microwave Pasta Cooker'
+        this.el('subtitle').textContent = 'LG NeoChef MH6535 · 1000 W microwave mode · pasta 83–333 g · water linked by a non-linear curve, then adjustable · times in 10 s steps'
         this.el('pasta-note').textContent = pasta.note
         this.el('out-time').textContent = this.fmtTime(x.t)
+        this.el('out-time-unit').textContent = 'al dente start · 10 s steps'
+        this.el('lbl-grain').textContent = 'Pasta'
+        this.el('unit-grain').textContent = 'g dry'
+        this.el('lbl-grain-slider').textContent = 'Pasta'
+        this.el('lbl-salt').textContent = 'Salt'
+        this.el('unit-salt').textContent = 'g ≈ 9 g/L'
         this.el('out-pasta').textContent = this.fmtNum(pastaG)
         this.el('out-water').textContent = String(Math.round(waterMl))
         this.el('out-salt').textContent = this.fmtNum(Math.round(waterMl * 0.009 * 10) / 10)
         this.el('out-mult').textContent = this.fmtNum(pastaG) + ' g'
         this.el('water-link').textContent = this.linkedWater ? 'linked' : 'custom'
+        this.el('grain-note').textContent = 'Stops at 83 · 124.5 · 166 · 249 · 333 g. Max fill is 333 g. Moving pasta resets water to the linked curve.'
+        this.el('water-note').textContent = 'Linked anchors: 83 g → 333 ml · 166 g → 666 ml · 333 g → 1000 ml. Drag water off the curve for a custom volume.'
         this.el('breakdown').textContent =
           't_ad ' + this.fmtTime(x.ad) +
           '  +  (1-γ)t_heat ' + this.fmtTime(x.load) +
@@ -656,6 +837,45 @@
           '  =  ' + this.fmtTime(x.t)
         document.querySelectorAll('#pasta-ticks .tick').forEach(tick => {
           tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - pastaG) < 3)
+        })
+        document.querySelectorAll('#water-ticks .tick').forEach(tick => {
+          tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - waterMl) < 12)
+        })
+      },
+      updateRice() {
+        const riceG = Number(this.el('pasta-g').value)
+        const rice = this.currentRice()
+        if (this.linkedWater) {
+          this.el('water-ml').value = String(Math.round(this.waterForRice(riceG)))
+        }
+        const waterMl = Number(this.el('water-ml').value)
+        const x = this.computeRice(riceG, waterMl, rice)
+        const salt = Math.round(rice.saltPer150 * (riceG / 150) * 10) / 10
+        this.el('eyebrow').textContent = 'Microwave Rice Cooker'
+        this.el('subtitle').textContent = 'Reishunger 546-W · LG NeoChef at 1000 W High · lid on · 75–450 g rice · water follows the cup table × variety factor'
+        this.el('pasta-note').textContent = rice.note
+        this.el('out-time').textContent = this.fmtTime(x.t)
+        this.el('out-time-unit').textContent = 'lid on · 1000 W · then rest ' + rice.rest + ' min'
+        this.el('lbl-grain').textContent = 'Rice'
+        this.el('unit-grain').textContent = 'g dry'
+        this.el('lbl-grain-slider').textContent = 'Rice'
+        this.el('lbl-salt').textContent = 'Salt'
+        this.el('unit-salt').textContent = rice.saltPer150 ? 'g · 1 g / 150 g rice' : 'g · none in the pot'
+        this.el('out-pasta').textContent = this.fmtNum(riceG)
+        this.el('out-water').textContent = String(Math.round(waterMl))
+        this.el('out-salt').textContent = this.fmtNum(salt)
+        this.el('out-mult').textContent = this.fmtNum(riceG) + ' g'
+        this.el('water-link').textContent = this.linkedWater ? 'linked' : 'custom'
+        this.el('grain-note').textContent = 'Stops at 75 · 150 · 225 · 300 · 450 g (0.5–3 Reishunger becher). Max 450 g. Moving rice resets water.'
+        this.el('water-note').textContent = 'Manual anchors at factor 1.00: 150 g → 270 ml · 300 g → 540 ml · 450 g → 720 ml. Jasmine ×1.00 · basmati ×1.08 · koshihikari ×0.78.'
+        this.el('rice-breakdown').textContent =
+          't_gel ' + this.fmtTime(x.gel) +
+          '  +  (1-γ)t_heat ' + this.fmtTime(x.load) +
+          '  +  t_bulk ' + this.fmtTime(x.bulk) +
+          '  =  ' + this.fmtTime(x.t) +
+          '  ·  rest ' + rice.rest + ':00'
+        document.querySelectorAll('#pasta-ticks .tick').forEach(tick => {
+          tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - riceG) < 8)
         })
         document.querySelectorAll('#water-ticks .tick').forEach(tick => {
           tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - waterMl) < 12)
@@ -716,6 +936,12 @@
           cooker.el('manual-geom').value = btn.dataset.geom
           cooker.update()
         })
+      })
+      cooker.el('mode-pasta').addEventListener('click', () => cooker.setMode('pasta'))
+      cooker.el('mode-rice').addEventListener('click', () => cooker.setMode('rice'))
+      cooker.el('rice').addEventListener('change', () => {
+        cooker.linkedWater = true
+        cooker.update()
       })
       cooker._lastId = cooker.el('pasta').value
       cooker.update()

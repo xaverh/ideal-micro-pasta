@@ -79,6 +79,7 @@
     .mode-switch {
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 0.4rem;
       margin-top: 1rem;
     }
@@ -98,8 +99,19 @@
       color: var(--header-fg);
       border-color: var(--header-bg);
     }
-    .mode-pasta .rice-only { display: none; }
-    .mode-rice .pasta-only { display: none; }
+    .mode-pasta .rice-only,
+    .mode-pasta .veg-only,
+    .mode-pasta .combi-only { display: none; }
+    .mode-rice .pasta-only,
+    .mode-rice .veg-only,
+    .mode-rice .combi-only { display: none; }
+    .mode-veg .pasta-only,
+    .mode-veg .rice-only,
+    .mode-veg .combi-only { display: none; }
+    .mode-combi .pasta-only,
+    .mode-combi .rice-only,
+    .mode-combi .veg-only,
+    .mode-combi .need-water { display: none; }
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -364,6 +376,8 @@
       <div class="mode-switch">
         <button type="button" id="mode-pasta" class="on">Pasta</button>
         <button type="button" id="mode-rice">Rice</button>
+        <button type="button" id="mode-veg">Vegetables</button>
+        <button type="button" id="mode-combi">Co-1 · Co-2 · Co-3</button>
       </div>
     </header>
 
@@ -396,9 +410,68 @@
       </select>
       <label class="field rice-only" for="rice">Rice</label>
       <select id="rice" class="rice-only">
-        <option value="jasmine" selected>Deer Brand Extra Fancy Jasmine (Thailand)</option>
-        <option value="koshihikari">Shiro Koshihikari Sushi Rice</option>
-        <option value="basmati">Daawat Extra Long Basmati</option>
+        <optgroup label="In the house">
+          <option value="jasmine" selected>Deer Brand Extra Fancy Jasmine (Thailand)</option>
+          <option value="koshihikari">Shiro Koshihikari Sushi Rice</option>
+          <option value="basmati">Daawat Extra Long Basmati</option>
+        </optgroup>
+        <optgroup label="Other white">
+          <option value="longgrain">Long-grain white</option>
+          <option value="parboiled">Parboiled / converted</option>
+          <option value="sticky">Thai sticky / glutinous</option>
+          <option value="arborio">Arborio (risotto rice)</option>
+          <option value="bomba">Bomba / paella rice</option>
+        </optgroup>
+        <optgroup label="Whole grain — watch the water">
+          <option value="brown-basmati">Brown basmati</option>
+          <option value="brown-short">Brown short-grain</option>
+        </optgroup>
+      </select>
+      <label class="field veg-only" for="veg">Vegetable</label>
+      <select id="veg" class="veg-only">
+        <optgroup label="Quick">
+          <option value="spinach">Spinach / leaf greens</option>
+          <option value="peas">Peas</option>
+          <option value="zucchini">Zucchini, 5 mm slices</option>
+          <option value="asparagus" selected>Asparagus</option>
+        </optgroup>
+        <optgroup label="Florets &amp; pods">
+          <option value="broccoli">Broccoli florets</option>
+          <option value="cauliflower">Cauliflower florets</option>
+          <option value="beans">Green beans</option>
+          <option value="bokchoy">Bok choy</option>
+        </optgroup>
+        <optgroup label="Denser">
+          <option value="carrots">Carrots, 5 mm slices</option>
+          <option value="brussels">Brussels sprouts, halved</option>
+          <option value="potato">Potato, 2 cm cubes</option>
+          <option value="sweetpotato">Sweet potato, 2 cm cubes</option>
+          <option value="corn">Corn on the cob</option>
+          <option value="frozen">Frozen mixed vegetables</option>
+        </optgroup>
+      </select>
+      <label class="field combi-only" for="combi">Grill combination</label>
+      <select id="combi" class="combi-only">
+        <optgroup label="Co-1 · 200 W + 900 W grill">
+          <option value="toast">Cheese toast / croque</option>
+          <option value="nachos">Nachos</option>
+          <option value="garlic">Garlic bread</option>
+          <option value="gratin-finish">Finish a gratin (brown top)</option>
+        </optgroup>
+        <optgroup label="Co-2 · 300 W + 900 W grill">
+          <option value="chicken" selected>Chicken pieces</option>
+          <option value="sausage">Sausages</option>
+          <option value="fish">Fish fillet</option>
+          <option value="fingers">Frozen fish fingers</option>
+          <option value="nuggets">Chicken nuggets</option>
+        </optgroup>
+        <optgroup label="Co-3 · 400 W + 900 W grill">
+          <option value="pizza">Frozen pizza</option>
+          <option value="chips">Frozen oven chips</option>
+          <option value="potatohalf">Baked potato halves</option>
+          <option value="gratin">Potato / vegetable gratin</option>
+          <option value="lasagna">Lasagna / baked pasta</option>
+        </optgroup>
       </select>
       <p class="pasta-note" id="pasta-note"></p>
 
@@ -488,7 +561,7 @@
         <p class="flex-note" id="grain-note">Stops at 83 · 124.5 · 166 · 249 · 333&nbsp;g. Max fill is 333&nbsp;g. Moving pasta resets water to the linked curve.</p>
       </div>
 
-      <div class="slider-wrap">
+      <div class="slider-wrap need-water">
         <div class="slider-head">
           <label class="field" for="water-ml" style="margin:0">Water</label>
           <span class="mult-sub" id="water-link">linked</span>
@@ -522,6 +595,28 @@
         <li><strong>Lid on</strong> — Close the rice cooker so the lid vents can circulate steam. Never run it dry.</li>
         <li><strong>1000&nbsp;W</strong> — High / P-HI on the LG NeoChef. Lid on, no grill. Glance once that water remains.</li>
         <li><strong>Rest</strong> — Leave the lid on for the shown rest. Then fluff with the paddle.</li>
+      </ol>
+    </div>
+
+    <div class="card howto veg-only">
+      <h2>How to use</h2>
+      <ol>
+        <li><strong>Cut even</strong> — Same-size pieces. Times assume the cut listed on the vegetable.</li>
+        <li><strong>Vessel</strong> — Pasta cooker with a little water, or any microwave-safe bowl with a vented lid. The Reishunger rice cooker is not a steamer.</li>
+        <li><strong>Water</strong> — Only the shown splash. The vegetables steam in their own moisture plus that film of water.</li>
+        <li><strong>1000&nbsp;W</strong> — Covered, High / P-HI. No grill. Stir or shake halfway on portions over 250&nbsp;g.</li>
+        <li><strong>Stop early</strong> — Crisp-tender. Rest 1&nbsp;min covered, then uncover so they do not keep cooking.</li>
+      </ol>
+    </div>
+
+    <div class="card howto combi-only">
+      <h2>How to use</h2>
+      <ol>
+        <li><strong>Cook Mode</strong> until Co-1 appears, then +/− to Co-2 or Co-3. START, set the time, START.</li>
+        <li><strong>Rack</strong> — High rack on the glass tray for pieces, toast, pizza, chips. Heat-proof dish on the turntable for gratins and lasagna.</li>
+        <li><strong>Not in plastic</strong> — Do not put the pasta cooker or the Reishunger rice cooker under the grill.</li>
+        <li><strong>Turn</strong> — Halfway on meat, sausages, chips, toast. Fat will spit; use gloves.</li>
+        <li><strong>Why which Co</strong> — Co-1 is grill-heavy (thin, already cooked, browning). Co-2 is even roast. Co-3 is microwave-heavy (dense, frozen, wet bakes).</li>
       </ol>
     </div>
 
@@ -564,6 +659,37 @@
       </div>
     </div>
 
+    <div class="card veg-only">
+      <h2>Algorithm</h2>
+      <div class="formula-box">
+        1000&nbsp;W High, covered. Times averaged from microwave steaming charts (Serious Eats, Whirlpool, OSU Extension, BBC Good Food) then scaled by mass.
+        <br><br>
+        <code>t = t_250 · (m / 250)^0.55 + 0.15 · V / 30</code>
+        <ul>
+          <li><code>t_250</code> — minutes for 250&nbsp;g of that cut at 1000&nbsp;W</li>
+          <li>Exponent 0.55 — extra mass does not add time linearly in a microwave</li>
+          <li>Water is only a steam film: about 30–60&nbsp;ml per 250&nbsp;g</li>
+        </ul>
+        Result rounded to 10&nbsp;s. Then rest 1&nbsp;min covered.
+        <p style="margin-top:.7rem" id="veg-breakdown"></p>
+      </div>
+    </div>
+
+    <div class="card combi-only">
+      <h2>Algorithm</h2>
+      <div class="formula-box">
+        LG NeoChef MH6535 grill combination: Co-1 200&nbsp;W + 900&nbsp;W quartz grill, Co-2 300&nbsp;W, Co-3 400&nbsp;W. No preheat. High rack unless the note says dish.
+        <br><br>
+        <code>t = t_base · (m / m_base)^0.65</code>
+        <ul>
+          <li><code>t_base</code> from grill-combi charts (chicken pieces ~18&nbsp;min / 500&nbsp;g at ~300&nbsp;W+grill, gratins ~18&nbsp;min / 450&nbsp;g at ~400&nbsp;W+grill, frozen pizza ~12&nbsp;min / 350&nbsp;g)</li>
+          <li>Co-1 for surface, Co-2 for roast pieces, Co-3 for dense or frozen</li>
+        </ul>
+        Turn at half time when the note says so.
+        <p style="margin-top:.7rem" id="combi-breakdown"></p>
+      </div>
+    </div>
+
     <div class="notes pasta-only">
       <p><strong>Important</strong> · Cold tap water only · 1000&nbsp;W microwave mode only (no grill / combination) · No oil · Contents are very hot.</p>
       <p>Displayed times are al dente starting points. Standard spaghetti uses 8:00 package cottura. Water is not a fixed multiple of pasta: 166&nbsp;g pairs with 666&nbsp;ml, 333&nbsp;g with 1&nbsp;l.</p>
@@ -573,7 +699,17 @@
     <div class="notes rice-only">
       <p><strong>Important</strong> · Reishunger microwave rice cooker · lid on · 1000&nbsp;W High · no grill · never dry-heat · steam is hot.</p>
       <p>White rice only. The cooker is not meant for brown or whole-grain rice. Max 450&nbsp;g dry. There must always be free water during the cook.</p>
-      <p>1 becher = 150&nbsp;g ≈ 2 portions. Booklet at 800&nbsp;W was 10–13 / 13–15 / 17–19&nbsp;min; times here are the 1000&nbsp;W equivalent. Salt is 1&nbsp;g per 150&nbsp;g for jasmine and basmati, 0&nbsp;g for koshihikari.</p>
+      <p>1 becher = 150&nbsp;g ≈ 2 portions. Booklet at 800&nbsp;W was 10–13 / 13–15 / 17–19&nbsp;min; times here are the 1000&nbsp;W equivalent. Salt is 1&nbsp;g per 150&nbsp;g unless the variety says 0.</p>
+    </div>
+
+    <div class="notes veg-only">
+      <p><strong>Important</strong> · 1000&nbsp;W High · covered · a few tablespoons of water only · no grill · steam burns.</p>
+      <p>Times are crisp-tender starting points for fresh vegetables unless marked frozen. Cut as named. Uncover after the 1&nbsp;min rest.</p>
+    </div>
+
+    <div class="notes combi-only">
+      <p><strong>Important</strong> · Quartz grill under the ceiling · cavity and rack are very hot · use oven gloves · metal rack is the one that came with the NeoChef.</p>
+      <p>Co-1 = 200&nbsp;W microwave + grill. Co-2 = 300&nbsp;W + grill. Co-3 = 400&nbsp;W + grill. Plastic cookers stay out of this mode.</p>
     </div>
 
     <footer>
@@ -619,7 +755,97 @@
           waterFactor: 1.08,
           saltPer150: 1,
           rest: 8
+        },
+        longgrain: {
+          name: 'Long-grain white',
+          note: 'Rinse twice · lid on · rest 5 min',
+          gel: 9.0,
+          waterFactor: 1.10,
+          saltPer150: 1,
+          rest: 5
+        },
+        parboiled: {
+          name: 'Parboiled / converted',
+          note: 'No soak · more water · rest 5 min',
+          gel: 12.5,
+          waterFactor: 1.35,
+          saltPer150: 1,
+          rest: 5
+        },
+        sticky: {
+          name: 'Thai sticky / glutinous',
+          note: 'Soak 30 min if you can · rinse until clear · less water · rest 10 min',
+          gel: 12.0,
+          waterFactor: 0.72,
+          saltPer150: 0,
+          rest: 10
+        },
+        arborio: {
+          name: 'Arborio',
+          note: 'Do not rinse · wetter absorption · stir once at half time · rest 2 min',
+          gel: 13.0,
+          waterFactor: 1.55,
+          saltPer150: 1,
+          rest: 2
+        },
+        bomba: {
+          name: 'Bomba / paella',
+          note: 'Rinse once · grains stay separate · rest 5 min',
+          gel: 12.0,
+          waterFactor: 1.25,
+          saltPer150: 1,
+          rest: 5
+        },
+        'brown-basmati': {
+          name: 'Brown basmati',
+          note: 'Bran needs more water and time · keep free water in the pot · rest 8 min · max 300 g in the Reishunger cooker',
+          gel: 20.0,
+          waterFactor: 1.55,
+          saltPer150: 1,
+          rest: 8
+        },
+        'brown-short': {
+          name: 'Brown short-grain',
+          note: 'Long soak optional · watch that the pot never runs dry · rest 10 min · max 300 g in the Reishunger cooker',
+          gel: 22.0,
+          waterFactor: 1.65,
+          saltPer150: 1,
+          rest: 10
         }
+      },
+      vegStops: [100, 200, 250, 350, 500],
+      vegWaterStops: [20, 30, 45, 60, 80],
+      veggies: {
+        spinach: { note: 'Trim stems · pile loosely · uncover as soon as wilted', t250: 2.0, waterPer250: 20, prep: 'loose leaves' },
+        peas: { note: 'Fresh or thawed · shake the cooker once', t250: 3.0, waterPer250: 30, prep: 'whole' },
+        zucchini: { note: '5 mm discs · stop at crisp-tender', t250: 3.5, waterPer250: 30, prep: '5 mm slices' },
+        asparagus: { note: 'Woody ends off · even spears', t250: 3.5, waterPer250: 30, prep: 'whole spears' },
+        broccoli: { note: '30 mm florets · peel and slice thick stalks', t250: 4.0, waterPer250: 40, prep: '30 mm florets' },
+        cauliflower: { note: '30 mm florets · same as broccoli, sometimes +20 s', t250: 4.2, waterPer250: 40, prep: '30 mm florets' },
+        beans: { note: 'Trim ends · keep whole', t250: 5.0, waterPer250: 40, prep: 'whole' },
+        bokchoy: { note: 'Halve or separate leaves · wash grit', t250: 4.0, waterPer250: 30, prep: 'halved' },
+        carrots: { note: '5 mm coins or sticks', t250: 5.5, waterPer250: 45, prep: '5 mm slices' },
+        brussels: { note: 'Halved through the stem', t250: 7.0, waterPer250: 45, prep: 'halved' },
+        potato: { note: '2 cm cubes · peel optional', t250: 8.0, waterPer250: 60, prep: '2 cm cubes' },
+        sweetpotato: { note: '2 cm cubes', t250: 7.0, waterPer250: 55, prep: '2 cm cubes' },
+        corn: { note: 'Whole cobs · 1 cob ≈ 250 g · roll halfway', t250: 7.0, waterPer250: 40, prep: 'whole cob' },
+        frozen: { note: 'From frozen · no extra thaw · drain after', t250: 5.5, waterPer250: 15, prep: 'frozen mix' }
+      },
+      combis: {
+        toast: { code: 'Co-1', watts: 200, note: 'High rack · turn once · 2 slices ≈ 80 g', tBase: 8, mBase: 80, turn: true },
+        nachos: { code: 'Co-1', watts: 200, note: 'Heat-proof plate · watch the cheese', tBase: 5, mBase: 150, turn: false },
+        garlic: { code: 'Co-1', watts: 200, note: 'High rack · bread dries fast', tBase: 4, mBase: 120, turn: true },
+        'gratin-finish': { code: 'Co-1', watts: 200, note: 'Already cooked bake · dish on turntable · brown only', tBase: 5, mBase: 400, turn: false },
+        chicken: { code: 'Co-2', watts: 300, note: 'High rack · oil and season · turn halfway · rest 3 min', tBase: 18, mBase: 500, turn: true },
+        sausage: { code: 'Co-2', watts: 300, note: 'High rack · prick · turn halfway', tBase: 12, mBase: 400, turn: true },
+        fish: { code: 'Co-2', watts: 300, note: 'Dish or rack · brush oil · do not overcook', tBase: 10, mBase: 400, turn: false },
+        fingers: { code: 'Co-2', watts: 300, note: 'High rack · from frozen · turn halfway', tBase: 10, mBase: 300, turn: true },
+        nuggets: { code: 'Co-2', watts: 300, note: 'High rack · from frozen · turn halfway', tBase: 10, mBase: 300, turn: true },
+        pizza: { code: 'Co-3', watts: 400, note: 'High rack or crust plate · from frozen · no preheat required', tBase: 12, mBase: 350, turn: false },
+        chips: { code: 'Co-3', watts: 400, note: 'High rack · from frozen · shake halfway', tBase: 12, mBase: 400, turn: true },
+        potatohalf: { code: 'Co-3', watts: 400, note: 'Halved, cut side to the grill · high rack', tBase: 10, mBase: 500, turn: false },
+        gratin: { code: 'Co-3', watts: 400, note: 'Shallow heat-proof dish on turntable · rest 3 min', tBase: 18, mBase: 450, turn: false },
+        lasagna: { code: 'Co-3', watts: 400, note: 'Heat-proof dish · already assembled · rest 5 min', tBase: 16, mBase: 800, turn: false }
       },
       pastas: {
         'spaghettoni-bronzo': { note: 'Package 12:00 · bronze, long', pkg: 12, bronze: true, geom: 0.25 },
@@ -670,6 +896,24 @@
         const n = riceG / 150
         const bulk = 0.35 * Math.max(0, n - 1) * Math.max(0, n - 1)
         return { gel: rice.gel, load, bulk, t: rice.gel + load + bulk, rest: rice.rest }
+      },
+      currentVeg() {
+        return this.veggies[this.el('veg').value] || this.veggies.asparagus
+      },
+      currentCombi() {
+        return this.combis[this.el('combi').value] || this.combis.chicken
+      },
+      waterForVeg(g) {
+        const v = this.currentVeg()
+        return v.waterPer250 * (g / 250)
+      },
+      computeVeg(g, waterMl, veg) {
+        const t = veg.t250 * Math.pow(g / 250, 0.55) + 0.15 * (waterMl / 30)
+        return { t250: veg.t250, t }
+      },
+      computeCombi(g, item) {
+        const t = item.tBase * Math.pow(g / item.mBase, 0.65)
+        return { t }
       },
       waterForPasta(p) {
         const a = this.waterAnchors
@@ -724,8 +968,8 @@
       snapPasta() {
         const el = this.el('pasta-g')
         const v = Number(el.value)
-        const stops = this.mode === 'rice' ? this.riceStops : this.pastaStops
-        const tol = this.mode === 'rice' ? 8 : 3
+        const stops = this.mode === 'rice' ? this.riceStops : this.mode === 'veg' ? this.vegStops : this.pastaStops
+        const tol = this.mode === 'rice' || this.mode === 'veg' ? 8 : 3
         const hit = stops.find(s => Math.abs(v - s) <= tol)
         if (hit != null) el.value = String(hit)
         this.linkedWater = true
@@ -734,7 +978,7 @@
       snapWater() {
         const el = this.el('water-ml')
         const v = Number(el.value)
-        const stops = this.mode === 'rice' ? this.riceWaterStops : this.waterStops
+        const stops = this.mode === 'rice' ? this.riceWaterStops : this.mode === 'veg' ? this.vegWaterStops : this.waterStops
         const hit = stops.find(s => Math.abs(v - s) <= 12)
         if (hit != null) el.value = String(hit)
         this.update()
@@ -745,43 +989,48 @@
         const app = this.el('app')
         app.classList.toggle('mode-pasta', mode === 'pasta')
         app.classList.toggle('mode-rice', mode === 'rice')
-        this.el('mode-pasta').classList.toggle('on', mode === 'pasta')
-        this.el('mode-rice').classList.toggle('on', mode === 'rice')
+        app.classList.toggle('mode-veg', mode === 'veg')
+        app.classList.toggle('mode-combi', mode === 'combi')
+        ;['pasta', 'rice', 'veg', 'combi'].forEach(m => {
+          this.el('mode-' + m).classList.toggle('on', mode === m)
+        })
         const grain = this.el('pasta-g')
         const water = this.el('water-ml')
         if (mode === 'rice') {
-          grain.min = 75
-          grain.max = 450
-          grain.step = 1
-          grain.value = 150
-          water.min = 150
-          water.max = 900
+          grain.min = 75; grain.max = 450; grain.step = 1; grain.value = 150
+          water.min = 150; water.max = 900
           this.buildTicks('pasta-ticks', this.riceStops, 75, 450, ' g', g => {
-            grain.value = String(g)
-            this.linkedWater = true
-            this.update()
+            grain.value = String(g); this.linkedWater = true; this.update()
           })
           this.buildTicks('water-ticks', this.riceWaterStops, 150, 900, ' ml', w => {
-            water.value = String(w)
-            this.linkedWater = false
-            this.update()
+            water.value = String(w); this.linkedWater = false; this.update()
+          })
+        } else if (mode === 'veg') {
+          grain.min = 100; grain.max = 500; grain.step = 5; grain.value = 250
+          water.min = 10; water.max = 100
+          this.buildTicks('pasta-ticks', this.vegStops, 100, 500, ' g', g => {
+            grain.value = String(g); this.linkedWater = true; this.update()
+          })
+          this.buildTicks('water-ticks', this.vegWaterStops, 10, 100, ' ml', w => {
+            water.value = String(w); this.linkedWater = false; this.update()
+          })
+        } else if (mode === 'combi') {
+          const item = this.currentCombi()
+          grain.min = Math.round(item.mBase * 0.4)
+          grain.max = Math.round(item.mBase * 2)
+          grain.step = 5
+          grain.value = String(item.mBase)
+          this.buildTicks('pasta-ticks', [item.mBase], grain.min, grain.max, ' g', g => {
+            grain.value = String(g); this.update()
           })
         } else {
-          grain.min = 83
-          grain.max = 333
-          grain.step = 0.5
-          grain.value = 83
-          water.min = 250
-          water.max = 1200
+          grain.min = 83; grain.max = 333; grain.step = 0.5; grain.value = 83
+          water.min = 250; water.max = 1200
           this.buildTicks('pasta-ticks', this.pastaStops, 83, 333, ' g', g => {
-            grain.value = String(g)
-            this.linkedWater = true
-            this.update()
+            grain.value = String(g); this.linkedWater = true; this.update()
           })
           this.buildTicks('water-ticks', this.waterStops, 250, 1200, ' ml', w => {
-            water.value = String(w)
-            this.linkedWater = false
-            this.update()
+            water.value = String(w); this.linkedWater = false; this.update()
           })
         }
         this.update()
@@ -789,6 +1038,14 @@
       update() {
         if (this.mode === 'rice') {
           this.updateRice()
+          return
+        }
+        if (this.mode === 'veg') {
+          this.updateVeg()
+          return
+        }
+        if (this.mode === 'combi') {
+          this.updateCombi()
           return
         }
         const manual = this.el('pasta').value === 'manual'
@@ -881,6 +1138,68 @@
           tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - waterMl) < 12)
         })
       },
+      updateVeg() {
+        const g = Number(this.el('pasta-g').value)
+        const veg = this.currentVeg()
+        if (this.linkedWater) {
+          this.el('water-ml').value = String(Math.round(this.waterForVeg(g)))
+        }
+        const waterMl = Number(this.el('water-ml').value)
+        const x = this.computeVeg(g, waterMl, veg)
+        this.el('eyebrow').textContent = 'Microwave vegetable steam'
+        this.el('subtitle').textContent = 'LG NeoChef MH6535 · 1000 W High · covered · pasta cooker or a vented bowl · splash of water only'
+        this.el('pasta-note').textContent = veg.prep + ' · ' + veg.note
+        this.el('out-time').textContent = this.fmtTime(x.t)
+        this.el('out-time-unit').textContent = 'covered · 1000 W · rest 1 min'
+        this.el('lbl-grain').textContent = 'Vegetables'
+        this.el('unit-grain').textContent = 'g prepared'
+        this.el('lbl-grain-slider').textContent = 'Vegetables'
+        this.el('lbl-salt').textContent = 'Salt'
+        this.el('unit-salt').textContent = 'g after steaming'
+        this.el('out-pasta').textContent = this.fmtNum(g)
+        this.el('out-water').textContent = String(Math.round(waterMl))
+        this.el('out-salt').textContent = this.fmtNum(Math.round(g * 0.004 * 10) / 10)
+        this.el('out-mult').textContent = this.fmtNum(g) + ' g'
+        this.el('water-link').textContent = this.linkedWater ? 'linked' : 'custom'
+        this.el('grain-note').textContent = 'Stops at 100 · 200 · 250 · 350 · 500 g. Times assume the listed cut.'
+        this.el('water-note').textContent = 'A steam film only. Typical 30–60 ml per 250 g. Drain after the rest.'
+        this.el('veg-breakdown').textContent =
+          't_250 ' + this.fmtTime(x.t250) +
+          '  ·  mass scale (m/250)^0.55  →  ' + this.fmtTime(x.t)
+        document.querySelectorAll('#pasta-ticks .tick').forEach(tick => {
+          tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - g) < 8)
+        })
+        document.querySelectorAll('#water-ticks .tick').forEach(tick => {
+          tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - waterMl) < 6)
+        })
+      },
+      updateCombi() {
+        const item = this.currentCombi()
+        const g = Number(this.el('pasta-g').value)
+        const x = this.computeCombi(g, item)
+        this.el('eyebrow').textContent = item.code + ' · ' + item.watts + ' W + grill'
+        this.el('subtitle').textContent = 'LG NeoChef MH6535 · Cook Mode Co-1 / Co-2 / Co-3 · 900 W quartz grill · high rack or heat-proof dish · no plastic cookers'
+        this.el('pasta-note').textContent = item.note + (item.turn ? ' · turn at half time' : '')
+        this.el('out-time').textContent = this.fmtTime(x.t)
+        this.el('out-time-unit').textContent = item.code + ' · ' + item.watts + ' W + 900 W grill'
+        this.el('lbl-grain').textContent = 'Food'
+        this.el('unit-grain').textContent = 'g'
+        this.el('lbl-grain-slider').textContent = 'Portion'
+        this.el('lbl-salt').textContent = 'Turn'
+        this.el('unit-salt').textContent = item.turn ? 'at half time' : 'no turn'
+        this.el('out-pasta').textContent = this.fmtNum(g)
+        this.el('out-water').textContent = '—'
+        this.el('out-salt').textContent = item.turn ? 'yes' : 'no'
+        this.el('out-mult').textContent = this.fmtNum(g) + ' g'
+        this.el('water-link').textContent = item.code
+        this.el('grain-note').textContent = 'Base portion ' + item.mBase + ' g → ' + this.fmtTime(item.tBase) + '. Time scales as (m / m_base)^0.65.'
+        this.el('combi-breakdown').textContent =
+          item.code + '  ' + item.watts + ' W + grill  ·  t_base ' + this.fmtTime(item.tBase) +
+          ' at ' + item.mBase + ' g  →  ' + this.fmtTime(x.t)
+        document.querySelectorAll('#pasta-ticks .tick').forEach(tick => {
+          tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - g) < 15)
+        })
+      },
       buildTicks(wrapId, stops, min, max, suffix, onPick) {
         const wrap = this.el(wrapId)
         wrap.replaceChildren()
@@ -939,10 +1258,17 @@
       })
       cooker.el('mode-pasta').addEventListener('click', () => cooker.setMode('pasta'))
       cooker.el('mode-rice').addEventListener('click', () => cooker.setMode('rice'))
+      cooker.el('mode-veg').addEventListener('click', () => cooker.setMode('veg'))
+      cooker.el('mode-combi').addEventListener('click', () => cooker.setMode('combi'))
       cooker.el('rice').addEventListener('change', () => {
         cooker.linkedWater = true
         cooker.update()
       })
+      cooker.el('veg').addEventListener('change', () => {
+        cooker.linkedWater = true
+        cooker.update()
+      })
+      cooker.el('combi').addEventListener('change', () => cooker.setMode('combi'))
       cooker._lastId = cooker.el('pasta').value
       cooker.update()
     })

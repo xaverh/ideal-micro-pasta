@@ -632,7 +632,7 @@
           <li><code>c_w = 4.184 J/g·K</code>, <code>ΔT_w = 82 K</code> (15 °C tap → ~97 °C)</li>
           <li><code>c_p = 1.8 J/g·K</code>, <code>ΔT_p = 70 K</code></li>
           <li><code>P_eff = 650 W</code> (~65% of the 1000 W rating in a deep cooker)</li>
-          <li><code>γ = 0.42</code> — heat-up that already cooks the pasta (calibrated to 333&nbsp;g / 1&nbsp;l / 8:00 spaghetti → 13:00)</li>
+          <li><code>γ = 0.32</code> — heat-up that already cooks the pasta (calibrated to 333&nbsp;g / 1&nbsp;l / 8:00 spaghetti → 14:00)</li>
           <li><code>t_die = 0.30</code> min if bronze-cut</li>
           <li><code>t_geom</code> from −0.25 to +0.25 min, symmetric about 0</li>
         </ul>
@@ -930,7 +930,7 @@
       compute(pastaG, waterMl, pasta) {
         const ad = this.alDente(pasta.pkg)
         const tHeat = (waterMl * 4.184 * 82 + pastaG * 1.8 * 70) / 650 / 60
-        const load = (1 - 0.42) * tHeat
+        const load = (1 - 0.32) * tHeat
         const die = pasta.bronze ? 0.30 : 0
         const geom = pasta.geom || 0
         return { ad, load, tHeat, die, geom, t: ad + load + die + geom }

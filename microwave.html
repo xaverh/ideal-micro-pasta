@@ -559,7 +559,7 @@
         </div>
         <input id="pasta-g" type="range" min="83" max="333" step="0.5" value="83">
         <div class="ticks" id="pasta-ticks"></div>
-        <p class="flex-note" id="grain-note">Stops at 83 · 124.5 · 166 · 249 · 333&nbsp;g. Max fill is 333&nbsp;g. Moving pasta resets water to the linked curve.</p>
+        <p class="flex-note" id="grain-note">Stops at 83 · 125 · 166 · 250 · 333&nbsp;g. Max fill is 333&nbsp;g. Moving pasta resets water to the linked curve.</p>
       </div>
 
       <div class="slider-wrap need-water">
@@ -720,11 +720,11 @@
 
   <script>
     const cooker = {
-      pastaStops: [83, 124.5, 166, 249, 333],
+      pastaStops: [83, 125, 166, 250, 333],
       waterStops: [333, 500, 666, 1000],
       waterAnchors: [
         { p: 83, w: 333 },
-        { p: 124.5, w: 500 },
+        { p: 125, w: 500 },
         { p: 166, w: 666 },
         { p: 333, w: 1000 }
       ],
@@ -1086,7 +1086,7 @@
         this.el('out-salt').textContent = this.fmtNum(Math.round(waterMl * 0.009 * 10) / 10)
         this.el('out-mult').textContent = this.fmtNum(pastaG) + ' g'
         this.el('water-link').textContent = this.linkedWater ? 'linked' : 'custom'
-        this.el('grain-note').textContent = 'Stops at 83 · 124.5 · 166 · 249 · 333 g. Max fill is 333 g. Moving pasta resets water to the linked curve.'
+        this.el('grain-note').textContent = 'Stops at 83 · 125 · 166 · 250 · 333 g. Max fill is 333 g. Moving pasta resets water to the linked curve.'
         this.el('water-note').textContent = 'Linked anchors: 83 g → 333 ml · 166 g → 666 ml · 333 g → 1000 ml. Drag water off the curve for a custom volume.'
         this.el('breakdown').textContent =
           't_ad ' + this.fmtTime(x.ad) +

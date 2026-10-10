@@ -336,31 +336,7 @@
       height: 1.05rem;
       accent-color: var(--accent);
     }
-    .geom-ticks {
-      position: relative;
-      height: 1.9rem;
-      margin-top: 0.3rem;
-    }
-    .geom-ticks button {
-      position: absolute;
-      transform: translateX(-50%);
-      background: none;
-      border: 0;
-      padding: 0;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .geom-ticks button.active { color: var(--ink); }
-    .geom-ticks svg { display: block; width: 22px; height: 14px; }
     .slider-wrap + .slider-wrap { margin-top: 1.15rem; }
-    .geom-help {
-      margin-top: 0.65rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .geom-help p { margin-bottom: 0.35rem; }
-    .geom-help ul { margin-left: 1.1rem; }
-    .geom-help li { margin-bottom: 0.2rem; }
     @media (max-width: 640px) {
       .readout { grid-template-columns: 1fr 1fr; }
       .stat .value { font-size: 1.55rem; }
@@ -491,40 +467,6 @@
             Bronze-cut die
           </label>
         </div>
-        <div class="manual-row">
-          <div class="slider-head">
-            <label class="field" for="manual-geom" style="margin:0">Geometry</label>
-            <span class="mult-sub" id="manual-geom-out">long +0.25 min</span>
-          </div>
-          <input id="manual-geom" type="range" min="-0.25" max="0.25" step="0.05" value="0.25">
-          <div class="geom-ticks">
-            <button type="button" style="left:0%" data-geom="-0.25" title="very thin -0.25">
-              <svg viewBox="0 0 22 14"><path d="M1 7h20" fill="none" stroke="currentColor" stroke-width="0.9"/></svg>
-            </button>
-            <button type="button" style="left:20%" data-geom="-0.15" title="thin long -0.15">
-              <svg viewBox="0 0 22 14"><path d="M1 7h20" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-            </button>
-            <button type="button" style="left:50%" data-geom="0" title="short 0">
-              <svg viewBox="0 0 22 14"><rect x="6" y="4" width="10" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
-            </button>
-            <button type="button" style="left:80%" data-geom="0.15" title="thick / hollow +0.15">
-              <svg viewBox="0 0 22 14"><rect x="5" y="3" width="12" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7h6" fill="none" stroke="currentColor" stroke-width="1"/></svg>
-            </button>
-            <button type="button" style="left:100%" data-geom="0.25" title="long +0.25">
-              <svg viewBox="0 0 22 14"><path d="M2 8c3-4 5 4 8 0s5 4 8 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            </button>
-          </div>
-          <div class="geom-help">
-            <p>Geometry is a microwave-only correction in minutes. Package cottura already covers how long the shape needs in boiling water. Use this slider only for how the shape behaves in a still cooker: clumping, trapped water, surface area. 0 is short pasta that stays separate.</p>
-            <ul>
-              <li><strong>−0.25</strong> very thin — capellini / angel hair (high surface area)</li>
-              <li><strong>−0.15</strong> thin long — spaghetti n.3 and similar fine strands</li>
-              <li><strong>0</strong> short compact — penne, fusilli, farfalle, elbows</li>
-              <li><strong>+0.15</strong> thick short or hollow — rigatoni, orecchiette</li>
-              <li><strong>+0.25</strong> long / flat / nesting — spaghetti, linguine, fettuccia, fusilli lunghi</li>
-            </ul>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -626,16 +568,15 @@
       <div class="formula-box">
         Fitted for LG NeoChef MH6535 at 1000&nbsp;W, cold tap ≈ 15&nbsp;°C, uncovered cooker.
         <br><br>
-        <code>t = t_ad + (1 − γ) · t_heat + t_die + t_geom</code>
+        <code>t = t_ad + (1 − γ) · t_heat + t_die</code>
         <ul>
           <li><code>t_ad = t_pkg − 1:00</code> (al dente from the box number; floor 75% of package)</li>
           <li><code>t_heat = (V·c_w·ΔT_w + m_p·c_p·ΔT_p) / P_eff</code> using the actual sliders</li>
           <li><code>c_w = 4.184 J/g·K</code>, <code>ΔT_w = 82 K</code> (15 °C tap → ~97 °C)</li>
           <li><code>c_p = 1.8 J/g·K</code>, <code>ΔT_p = 70 K</code></li>
           <li><code>P_eff = 650 W</code> (~65% of the 1000 W rating in a deep cooker)</li>
-          <li><code>γ = 0.32</code> — heat-up that already cooks Teflon-cut pasta (333&nbsp;g / 1&nbsp;l / 8:00 spaghetti → 14:00)</li>
-          <li><code>t_die = 0.30 + 0.20·t_heat</code> min if bronze-cut (rough die gelatinizes less while the water comes up; 284&nbsp;g / 902&nbsp;ml Barilla al Bronzo → 18:20)</li>
-          <li><code>t_geom</code> from −0.25 to +0.25 min, symmetric about 0</li>
+          <li><code>γ = 0.29</code> — heat-up that already cooks the pasta (333&nbsp;g / 1&nbsp;l / 8:00 spaghetti → 14:00)</li>
+          <li><code>t_die = max(0, 2.06 + 0.84·(t_pkg − 11))</code> min if bronze-cut. Package cottura already carries thickness, so a longer box number adds lag (284&nbsp;g / 902&nbsp;ml Spaghetti al Bronzo → 18:20; 250&nbsp;g / 834&nbsp;ml Spaghettoni al Bronzo → 19:40)</li>
         </ul>
         Result rounded to the nearest 10&nbsp;s.
         <p style="margin-top:.7rem" id="breakdown"></p>
@@ -849,23 +790,23 @@
         lasagna: { code: 'Co-3', watts: 400, note: 'Heat-proof dish · already assembled · rest 5 min', tBase: 16, mBase: 800, turn: false }
       },
       pastas: {
-        'spaghettoni-bronzo': { note: 'Package 12:00 · bronze, long', pkg: 12, bronze: true, geom: 0.25 },
-        'spaghetti-bronzo': { note: 'Package 11:00 · bronze, long', pkg: 11, bronze: true, geom: 0.25 },
-        'rey-n3': { note: 'Package ~9:00 · bronze, thin long', pkg: 9, bronze: true, geom: -0.15 },
-        'rey-n5': { note: 'Package ~10:00 · bronze, long', pkg: 10, bronze: true, geom: 0.25 },
-        'rey-linguine': { note: 'Package ~10:30 · bronze, flat long', pkg: 10.5, bronze: true, geom: 0.25 },
-        'fettuccia': { note: 'Package 12:00 · bronze, flat long', pkg: 12, bronze: true, geom: 0.25 },
-        'fettuccine-uovo': { note: 'Package 4:00 · egg pasta · bronze, flat long', pkg: 4, bronze: true, geom: 0.25 },
-        'fusilli-lunghi': { note: 'Package 13:00 · bronze, hollow long', pkg: 13, bronze: true, geom: 0.25 },
-        'orecchiette': { note: 'Package 11:00 · bronze, thick short', pkg: 11, bronze: true, geom: 0.15 },
-        'spaghetti': { note: 'Package 8:00 · long', pkg: 8, bronze: false, geom: 0.25 },
-        'linguine': { note: 'Package 9:00 · long', pkg: 9, bronze: false, geom: 0.25 },
-        'penne': { note: 'Package 11:00 · short compact', pkg: 11, bronze: false, geom: 0 },
-        'fusilli': { note: 'Package 11:00 · short compact', pkg: 11, bronze: false, geom: 0 },
-        'farfalle': { note: 'Package 11:00 · short compact', pkg: 11, bronze: false, geom: 0 },
-        'macaroni': { note: 'Package 8:00 · short compact', pkg: 8, bronze: false, geom: 0 },
-        'rigatoni': { note: 'Package 12:00 · thick short', pkg: 12, bronze: false, geom: 0.15 },
-        'angel': { note: 'Package 4:00 · very thin', pkg: 4, bronze: false, geom: -0.25 }
+        'spaghettoni-bronzo': { note: 'Package 12:00 · bronze', pkg: 12, bronze: true },
+        'spaghetti-bronzo': { note: 'Package 11:00 · bronze', pkg: 11, bronze: true },
+        'rey-n3': { note: 'Package ~9:00 · bronze', pkg: 9, bronze: true },
+        'rey-n5': { note: 'Package ~10:00 · bronze', pkg: 10, bronze: true },
+        'rey-linguine': { note: 'Package ~10:30 · bronze', pkg: 10.5, bronze: true },
+        'fettuccia': { note: 'Package 12:00 · bronze', pkg: 12, bronze: true },
+        'fettuccine-uovo': { note: 'Package 4:00 · egg pasta · bronze', pkg: 4, bronze: true },
+        'fusilli-lunghi': { note: 'Package 13:00 · bronze', pkg: 13, bronze: true },
+        'orecchiette': { note: 'Package 11:00 · bronze', pkg: 11, bronze: true },
+        'spaghetti': { note: 'Package 8:00', pkg: 8, bronze: false },
+        'linguine': { note: 'Package 9:00', pkg: 9, bronze: false },
+        'penne': { note: 'Package 11:00', pkg: 11, bronze: false },
+        'fusilli': { note: 'Package 11:00', pkg: 11, bronze: false },
+        'farfalle': { note: 'Package 11:00', pkg: 11, bronze: false },
+        'macaroni': { note: 'Package 8:00', pkg: 8, bronze: false },
+        'rigatoni': { note: 'Package 12:00', pkg: 12, bronze: false },
+        'angel': { note: 'Package 4:00', pkg: 4, bronze: false }
       },
       fmtTime(min) {
         const secs = Math.max(0, Math.round((min * 60) / 10) * 10)
@@ -932,38 +873,25 @@
       compute(pastaG, waterMl, pasta) {
         const ad = this.alDente(pasta.pkg)
         const tHeat = (waterMl * 4.184 * 82 + pastaG * 1.8 * 70) / 650 / 60
-        const load = (1 - 0.32) * tHeat
-        const die = pasta.bronze ? 0.30 + 0.20 * tHeat : 0
-        const geom = pasta.geom || 0
-        return { ad, load, tHeat, die, geom, t: ad + load + die + geom }
-      },
-      geomLabel(g) {
-        let kind = 'short compact'
-        if (g <= -0.20) kind = 'very thin'
-        else if (g < -0.05) kind = 'thin long'
-        else if (g >= 0.20) kind = 'long / nesting'
-        else if (g > 0.05) kind = 'thick / hollow'
-        return kind + ' ' + this.fmtMin(g) + ' min'
+        const load = (1 - 0.29) * tHeat
+        const die = pasta.bronze ? Math.max(0, 2.06 + 0.84 * (pasta.pkg - 11)) : 0
+        return { ad, load, tHeat, die, t: ad + load + die }
       },
       seedManual(pasta) {
         this.el('manual-pkg').value = String(Math.round(pasta.pkg * 60 / 10) * 10)
         this.el('manual-bronze').checked = !!pasta.bronze
-        this.el('manual-geom').value = String(pasta.geom || 0)
       },
       currentPasta() {
         const id = this.el('pasta').value
         if (id !== 'manual') return this.pastas[id]
         const pkg = Number(this.el('manual-pkg').value) / 60
-        const geom = Number(this.el('manual-geom').value)
         const bronze = this.el('manual-bronze').checked
         return {
           pkg,
           bronze,
-          geom,
           note: 'Manual · package ' + this.fmtTime(pkg)
             + ' · al dente ' + this.fmtTime(this.alDente(pkg))
             + (bronze ? ' · bronze' : ' · Teflon / other')
-            + ' · ' + this.geomLabel(geom)
         }
       },
       el(id) { return document.getElementById(id) },
@@ -1055,14 +983,9 @@
         if (manual) {
           const pkgSec = Number(this.el('manual-pkg').value)
           const pkg = pkgSec / 60
-          const geom = Number(this.el('manual-geom').value)
           this.el('manual-pkg-out').textContent = this.fmtTime(pkg)
           this.el('manual-ad-note').textContent =
             'Al dente used in the model: ' + this.fmtTime(this.alDente(pkg)) + ' (package − 1:00, floor 75%).'
-          this.el('manual-geom-out').textContent = this.geomLabel(geom)
-          document.querySelectorAll('.geom-ticks button').forEach(btn => {
-            btn.classList.toggle('active', Math.abs(Number(btn.dataset.geom) - geom) < 0.03)
-          })
         }
         const pastaG = Number(this.el('pasta-g').value)
         if (this.linkedWater) {
@@ -1092,7 +1015,6 @@
           't_ad ' + this.fmtTime(x.ad) +
           '  +  (1-γ)t_heat ' + this.fmtTime(x.load) +
           '  +  t_die ' + this.fmtMin(x.die) +
-          '  +  t_geom ' + this.fmtMin(x.geom) +
           '  =  ' + this.fmtTime(x.t)
         document.querySelectorAll('#pasta-ticks .tick').forEach(tick => {
           tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - pastaG) < 3)
@@ -1250,14 +1172,7 @@
       })
       cooker.el('water-ml').addEventListener('change', () => cooker.snapWater())
       cooker.el('manual-pkg').addEventListener('input', () => cooker.update())
-      cooker.el('manual-geom').addEventListener('input', () => cooker.update())
       cooker.el('manual-bronze').addEventListener('change', () => cooker.update())
-      document.querySelectorAll('.geom-ticks button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          cooker.el('manual-geom').value = btn.dataset.geom
-          cooker.update()
-        })
-      })
       cooker.el('mode-pasta').addEventListener('click', () => cooker.setMode('pasta'))
       cooker.el('mode-rice').addEventListener('click', () => cooker.setMode('rice'))
       cooker.el('mode-veg').addEventListener('click', () => cooker.setMode('veg'))

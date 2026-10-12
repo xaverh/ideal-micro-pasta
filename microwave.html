@@ -575,8 +575,8 @@
           <li><code>c_w = 4.184 J/g·K</code>, <code>ΔT_w = 82 K</code> (15 °C tap → ~97 °C)</li>
           <li><code>c_p = 1.8 J/g·K</code>, <code>ΔT_p = 70 K</code></li>
           <li><code>P_eff = 650 W</code> (~65% of the 1000 W rating in a deep cooker)</li>
-          <li><code>γ = 0.29</code> — heat-up that already cooks the pasta (333&nbsp;g / 1&nbsp;l / 8:00 spaghetti → 14:00)</li>
-          <li><code>t_die = max(0, 2.06 + 0.84·(t_pkg − 11))</code> min if bronze-cut. Package cottura already carries thickness, so a longer box number adds lag (284&nbsp;g / 902&nbsp;ml Spaghetti al Bronzo → 18:20; 250&nbsp;g / 834&nbsp;ml Spaghettoni al Bronzo → 19:40)</li>
+          <li><code>γ = 0.29</code> ordinary, <code>0.66</code> bronze — more of the heat-up already cooks a bronze die (333&nbsp;g / 1&nbsp;l / 8:00 spaghetti → 14:00; 154&nbsp;g / 617&nbsp;ml Spaghetti al Bronzo → 17:20)</li>
+          <li><code>t_die = max(0, 5.31 + 0.58·(t_pkg − 11))</code> min if bronze-cut. Package cottura carries thickness (284&nbsp;g / 902&nbsp;ml Spaghetti al Bronzo → 18:20; 250&nbsp;g / 834&nbsp;ml Spaghettoni al Bronzo → 19:40)</li>
         </ul>
         Result rounded to the nearest 10&nbsp;s.
         <p style="margin-top:.7rem" id="breakdown"></p>
@@ -873,8 +873,8 @@
       compute(pastaG, waterMl, pasta) {
         const ad = this.alDente(pasta.pkg)
         const tHeat = (waterMl * 4.184 * 82 + pastaG * 1.8 * 70) / 650 / 60
-        const load = (1 - 0.29) * tHeat
-        const die = pasta.bronze ? Math.max(0, 2.06 + 0.84 * (pasta.pkg - 11)) : 0
+        const load = (1 - (pasta.bronze ? 0.66 : 0.29)) * tHeat
+        const die = pasta.bronze ? Math.max(0, 5.31 + 0.58 * (pasta.pkg - 11)) : 0
         return { ad, load, tHeat, die, t: ad + load + die }
       },
       seedManual(pasta) {

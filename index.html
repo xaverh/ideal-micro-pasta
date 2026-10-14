@@ -526,7 +526,7 @@
         <li><strong>Pasta first</strong> — Place the measured dry pasta in the cooker.</li>
         <li><strong>Cold water</strong> — Add the shown volume. Pasta must be fully covered.</li>
         <li><strong>Salt</strong> — Add the matching salt (≈ 9&nbsp;g per litre).</li>
-        <li><strong>Stir once</strong> — Cook <strong>uncovered</strong> on 1000&nbsp;W (High / P-HI).</li>
+        <li id="howto-pasta-power"><strong>Stir once</strong> — Cook <strong>uncovered</strong> on High.</li>
         <li><strong>Mid-cook stir</strong> — Halfway through, open carefully and stir (especially long pasta).</li>
         <li><strong>Test early</strong> — Check 10&nbsp;s before the displayed time. Add 10&nbsp;s steps to al dente.</li>
         <li><strong>Drain</strong> — Use the strainer lid. Stand 1&nbsp;min for better texture.</li>
@@ -541,7 +541,7 @@
         <li><strong>Water</strong> — Add the shown cold tap water. Optional 10&nbsp;min soak for Daawat basmati, then cook in the same water.</li>
         <li><strong>Salt</strong> — Jasmine and basmati: the shown pinch. Koshihikari: none in the cooker (season after with sushi-zu).</li>
         <li><strong>Lid on</strong> — Close the rice cooker so the lid vents can circulate steam. Never run it dry.</li>
-        <li><strong>1000&nbsp;W</strong> — High / P-HI on the LG NeoChef. Lid on, no grill. Glance once that water remains.</li>
+        <li id="howto-rice-power"><strong>High</strong> — Full microwave power. Lid on, no grill. Glance once that water remains.</li>
         <li><strong>Rest</strong> — Leave the lid on for the shown rest. Then fluff with the paddle.</li>
       </ol>
     </div>
@@ -552,7 +552,7 @@
         <li><strong>Cut even</strong> — Same-size pieces. Times assume the cut listed on the vegetable.</li>
         <li><strong>Vessel</strong> — Pasta cooker with a little water, or any microwave-safe bowl with a vented lid. The Reishunger rice cooker is not a steamer.</li>
         <li><strong>Water</strong> — Only the shown splash. The vegetables steam in their own moisture plus that film of water.</li>
-        <li><strong>1000&nbsp;W</strong> — Covered, High / P-HI. No grill. Stir or shake halfway on portions over 250&nbsp;g.</li>
+        <li id="howto-veg-power"><strong>High</strong> — Covered, full microwave power. No grill. Stir or shake halfway on portions over 250&nbsp;g.</li>
         <li><strong>Stop early</strong> — Crisp-tender. Rest 1&nbsp;min covered, then uncover so they do not keep cooking.</li>
       </ol>
     </div>
@@ -560,11 +560,11 @@
     <div class="card howto combi-only">
       <h2>How to use</h2>
       <ol>
-        <li><strong>Cook Mode</strong> until Co-1 appears, then +/− to Co-2 or Co-3. START, set the time, START.</li>
+        <li id="howto-combi-mode"><strong>Combination</strong> — select the mode named on the readout.</li>
         <li><strong>Rack</strong> — High rack on the glass tray for pieces, toast, pizza, chips. Heat-proof dish on the turntable for gratins and lasagna.</li>
         <li><strong>Not in plastic</strong> — Do not put the pasta cooker or the Reishunger rice cooker under the grill.</li>
         <li><strong>Turn</strong> — Halfway on meat, sausages, chips, toast. Fat will spit; use gloves.</li>
-        <li><strong>Why which Co</strong> — Co-1 is grill-heavy (thin, already cooked, browning). Co-2 is even roast. Co-3 is microwave-heavy (dense, frozen, wet bakes).</li>
+        <li id="howto-combi-why"><strong>Why which mode</strong> — grill-heavy for thin or already cooked food, more microwave for dense or frozen.</li>
       </ol>
     </div>
 
@@ -591,12 +591,12 @@
     <div class="card rice-only">
       <h2>Algorithm</h2>
       <div class="formula-box">
-        Fitted to the Reishunger microwave rice cooker (model 546-W) at 1000&nbsp;W on the LG NeoChef, lid on, plus variety offsets. Booklet times were 750–800&nbsp;W; heat-up is scaled to 1000&nbsp;W, gelatinization time is only trimmed slightly.
+        Fitted to the Reishunger microwave rice cooker (model 546-W), lid on, plus variety offsets. Booklet times were 750–800&nbsp;W. Heat-up uses the selected microwave’s P_eff (650&nbsp;W on the LG, 585&nbsp;W on the AEG).
         <br><br>
         <code>t = t_gel + (1 − γ) · t_heat + t_bulk</code>
         <ul>
           <li><code>t_gel</code> — time at cooking temperature: jasmine 8.5 · basmati 9.5 · koshihikari 10.0 min</li>
-          <li><code>t_heat = (V·c_w·ΔT_w) / P_eff</code> with <code>P_eff = 650 W</code> at 1000&nbsp;W High</li>
+          <li><code>t_heat = (V·c_w·ΔT_w) / P_eff</code> with the selected microwave’s P_eff</li>
           <li><code>γ = 0.22</code> — steam under the lid already cooks during heat-up</li>
           <li><code>t_bulk = 0.35·(n−1)²</code> min, <code>n = m_rice / 150 g</code> — crowding in the 1.7&nbsp;l cooker</li>
           <li>Water follows the manual cup table (1→1.5, 2→3, 3→4) times a variety factor: jasmine 1.00 · basmati 1.08 · koshihikari 0.78</li>
@@ -609,11 +609,11 @@
     <div class="card veg-only">
       <h2>Algorithm</h2>
       <div class="formula-box">
-        1000&nbsp;W High, covered. Times averaged from microwave steaming charts (Serious Eats, Whirlpool, OSU Extension, BBC Good Food) then scaled by mass.
+        Full microwave power, covered. Times averaged from microwave steaming charts (Serious Eats, Whirlpool, OSU Extension, BBC Good Food) at 1000&nbsp;W, then scaled by mass and by the selected microwave’s rated power.
         <br><br>
         <code>t = t_250 · (m / 250)^0.55 + 0.15 · V / 30</code>
         <ul>
-          <li><code>t_250</code> — minutes for 250&nbsp;g of that cut at 1000&nbsp;W</li>
+          <li><code>t_250</code> — minutes for 250&nbsp;g of that cut at 1000&nbsp;W, scaled by 1000 / rated&nbsp;W</li>
           <li>Exponent 0.55 — extra mass does not add time linearly in a microwave</li>
           <li>Water is only a steam film: about 30–60&nbsp;ml per 250&nbsp;g</li>
         </ul>
@@ -625,12 +625,12 @@
     <div class="card combi-only">
       <h2>Algorithm</h2>
       <div class="formula-box">
-        LG NeoChef MH6535 grill combination: Co-1 200&nbsp;W + 900&nbsp;W quartz grill, Co-2 300&nbsp;W, Co-3 400&nbsp;W. No preheat. High rack unless the note says dish.
+        Grill combination. LG NeoChef MH6535: Co-1 200&nbsp;W + 900&nbsp;W grill, Co-2 300&nbsp;W, Co-3 400&nbsp;W. AEG MFB295DB: Combi-Hi 36% microwave / 64% grill, Combi-Lo 55% / 45%. No preheat. High rack unless the note says dish.
         <br><br>
         <code>t = t_base · (m / m_base)^0.65</code>
         <ul>
           <li><code>t_base</code> from grill-combi charts (chicken pieces ~18&nbsp;min / 500&nbsp;g at ~300&nbsp;W+grill, gratins ~18&nbsp;min / 450&nbsp;g at ~400&nbsp;W+grill, frozen pizza ~12&nbsp;min / 350&nbsp;g)</li>
-          <li>Co-1 for surface, Co-2 for roast pieces, Co-3 for dense or frozen</li>
+          <li>LG: Co-1 surface, Co-2 roast, Co-3 dense or frozen. AEG: Combi-Hi for surface and roast, Combi-Lo for dense or frozen</li>
         </ul>
         Turn at half time when the note says so.
         <p style="margin-top:.7rem" id="combi-breakdown"></p>
@@ -638,25 +638,25 @@
     </div>
 
     <div class="notes pasta-only">
-      <p><strong>Important</strong> · Cold tap water only · 1000&nbsp;W microwave mode only (no grill / combination) · No oil · Contents are very hot.</p>
+      <p id="note-pasta"><strong>Important</strong> · Cold tap water only · microwave mode only (no grill / combination) · No oil · Contents are very hot.</p>
       <p>Displayed times are al dente starting points. Standard spaghetti uses 8:00 package cottura. Water is not a fixed multiple of pasta: 166&nbsp;g pairs with 666&nbsp;ml, 333&nbsp;g with 1&nbsp;l.</p>
       <p>Salt is 9&nbsp;g per litre of the chosen water. Keep pasta covered. Stir long shapes halfway.</p>
     </div>
 
     <div class="notes rice-only">
-      <p><strong>Important</strong> · Reishunger microwave rice cooker · lid on · 1000&nbsp;W High · no grill · never dry-heat · steam is hot.</p>
+      <p id="note-rice"><strong>Important</strong> · Reishunger microwave rice cooker · lid on · full microwave power · no grill · never dry-heat · steam is hot.</p>
       <p>White rice only. The cooker is not meant for brown or whole-grain rice. Max 450&nbsp;g dry. There must always be free water during the cook.</p>
-      <p>1 becher = 150&nbsp;g ≈ 2 portions. Booklet at 800&nbsp;W was 10–13 / 13–15 / 17–19&nbsp;min; times here are the 1000&nbsp;W equivalent. Salt is 1&nbsp;g per 150&nbsp;g unless the variety says 0.</p>
+      <p>1 becher = 150&nbsp;g ≈ 2 portions. Booklet at 800&nbsp;W was 10–13 / 13–15 / 17–19&nbsp;min; times here scale to the selected microwave. Salt is 1&nbsp;g per 150&nbsp;g unless the variety says 0.</p>
     </div>
 
     <div class="notes veg-only">
-      <p><strong>Important</strong> · 1000&nbsp;W High · covered · a few tablespoons of water only · no grill · steam burns.</p>
+      <p id="note-veg"><strong>Important</strong> · Full microwave power · covered · a few tablespoons of water only · no grill · steam burns.</p>
       <p>Times are crisp-tender starting points for fresh vegetables unless marked frozen. Cut as named. Uncover after the 1&nbsp;min rest.</p>
     </div>
 
     <div class="notes combi-only">
-      <p><strong>Important</strong> · Quartz grill under the ceiling · cavity and rack are very hot · use oven gloves · metal rack is the one that came with the NeoChef.</p>
-      <p>Co-1 = 200&nbsp;W microwave + grill. Co-2 = 300&nbsp;W + grill. Co-3 = 400&nbsp;W + grill. Plastic cookers stay out of this mode.</p>
+      <p id="note-combi"><strong>Important</strong> · Quartz grill under the ceiling · cavity and rack are very hot · use oven gloves.</p>
+      <p id="note-combi-modes">Combination modes depend on the selected microwave.</p>
     </div>
 
     <footer>
@@ -678,8 +678,30 @@
       mode: 'pasta',
       microwave: 'lg',
       microwaves: {
-        lg: { name: 'LG NeoChef MH6535', short: 'LG', watts: 1000, peff: 650, grill: 900 },
-        aeg: { name: 'AEG MFB295DB', short: 'AEG', watts: 900, peff: 585, grill: 1000 }
+        lg: {
+          name: 'LG NeoChef MH6535', short: 'LG', watts: 1000, peff: 650, grill: 900,
+          high: '1000 W (High / P-HI)',
+          combis: {
+            surface: { code: 'Co-1', watts: 200, label: 'Co-1 · 200 W + 900 W grill' },
+            roast: { code: 'Co-2', watts: 300, label: 'Co-2 · 300 W + 900 W grill' },
+            dense: { code: 'Co-3', watts: 400, label: 'Co-3 · 400 W + 900 W grill' }
+          },
+          combiHow: 'Cook Mode until Co-1 appears, then +/− to Co-2 or Co-3. START, set the time, START.',
+          combiWhy: 'Co-1 is grill-heavy (thin, already cooked, browning). Co-2 is even roast. Co-3 is microwave-heavy (dense, frozen, wet bakes).',
+          combiNote: 'Co-1 = 200 W microwave + grill. Co-2 = 300 W + grill. Co-3 = 400 W + grill. Use the rack that came with the NeoChef. Plastic cookers stay out of this mode.'
+        },
+        aeg: {
+          name: 'AEG MFB295DB', short: 'AEG', watts: 900, peff: 585, grill: 1000,
+          high: '900 W (full power)',
+          combis: {
+            surface: { code: 'Combi-Hi', watts: 324, label: 'Combi-Hi · 36% microwave / 64% grill' },
+            roast: { code: 'Combi-Hi', watts: 324, label: 'Combi-Hi · 36% microwave / 64% grill' },
+            dense: { code: 'Combi-Lo', watts: 495, label: 'Combi-Lo · 55% microwave / 45% grill' }
+          },
+          combiHow: 'Select Combi Cooking. Combi-Hi is grill-forward; Combi-Lo is more microwave. Set the time and start.',
+          combiWhy: 'Combi-Hi (36% microwave / 64% grill) for thin, already cooked, or roasting. Combi-Lo (55% microwave / 45% grill) for dense, frozen, or wet bakes.',
+          combiNote: 'Combi-Hi ≈ 324 W microwave + grill. Combi-Lo ≈ 495 W microwave + grill. Quartz grill is 1000 W. Plastic cookers stay out of this mode.'
+        }
       },
       riceStops: [75, 150, 225, 300, 450],
       riceWaterStops: [210, 270, 540, 720],
@@ -784,20 +806,20 @@
         frozen: { note: 'From frozen · no extra thaw · drain after', t250: 5.5, waterPer250: 15, prep: 'frozen mix' }
       },
       combis: {
-        toast: { code: 'Co-1', watts: 200, note: 'High rack · turn once · 2 slices ≈ 80 g', tBase: 8, mBase: 80, turn: true },
-        nachos: { code: 'Co-1', watts: 200, note: 'Heat-proof plate · watch the cheese', tBase: 5, mBase: 150, turn: false },
-        garlic: { code: 'Co-1', watts: 200, note: 'High rack · bread dries fast', tBase: 4, mBase: 120, turn: true },
-        'gratin-finish': { code: 'Co-1', watts: 200, note: 'Already cooked bake · dish on turntable · brown only', tBase: 5, mBase: 400, turn: false },
-        chicken: { code: 'Co-2', watts: 300, note: 'High rack · oil and season · turn halfway · rest 3 min', tBase: 18, mBase: 500, turn: true },
-        sausage: { code: 'Co-2', watts: 300, note: 'High rack · prick · turn halfway', tBase: 12, mBase: 400, turn: true },
-        fish: { code: 'Co-2', watts: 300, note: 'Dish or rack · brush oil · do not overcook', tBase: 10, mBase: 400, turn: false },
-        fingers: { code: 'Co-2', watts: 300, note: 'High rack · from frozen · turn halfway', tBase: 10, mBase: 300, turn: true },
-        nuggets: { code: 'Co-2', watts: 300, note: 'High rack · from frozen · turn halfway', tBase: 10, mBase: 300, turn: true },
-        pizza: { code: 'Co-3', watts: 400, note: 'High rack or crust plate · from frozen · no preheat required', tBase: 12, mBase: 350, turn: false },
-        chips: { code: 'Co-3', watts: 400, note: 'High rack · from frozen · shake halfway', tBase: 12, mBase: 400, turn: true },
-        potatohalf: { code: 'Co-3', watts: 400, note: 'Halved, cut side to the grill · high rack', tBase: 10, mBase: 500, turn: false },
-        gratin: { code: 'Co-3', watts: 400, note: 'Shallow heat-proof dish on turntable · rest 3 min', tBase: 18, mBase: 450, turn: false },
-        lasagna: { code: 'Co-3', watts: 400, note: 'Heat-proof dish · already assembled · rest 5 min', tBase: 16, mBase: 800, turn: false }
+        toast: { kind: 'surface', code: 'Co-1', watts: 200, note: 'High rack · turn once · 2 slices ≈ 80 g', tBase: 8, mBase: 80, turn: true },
+        nachos: { kind: 'surface', code: 'Co-1', watts: 200, note: 'Heat-proof plate · watch the cheese', tBase: 5, mBase: 150, turn: false },
+        garlic: { kind: 'surface', code: 'Co-1', watts: 200, note: 'High rack · bread dries fast', tBase: 4, mBase: 120, turn: true },
+        'gratin-finish': { kind: 'surface', code: 'Co-1', watts: 200, note: 'Already cooked bake · dish on turntable · brown only', tBase: 5, mBase: 400, turn: false },
+        chicken: { kind: 'roast', code: 'Co-2', watts: 300, note: 'High rack · oil and season · turn halfway · rest 3 min', tBase: 18, mBase: 500, turn: true },
+        sausage: { kind: 'roast', code: 'Co-2', watts: 300, note: 'High rack · prick · turn halfway', tBase: 12, mBase: 400, turn: true },
+        fish: { kind: 'roast', code: 'Co-2', watts: 300, note: 'Dish or rack · brush oil · do not overcook', tBase: 10, mBase: 400, turn: false },
+        fingers: { kind: 'roast', code: 'Co-2', watts: 300, note: 'High rack · from frozen · turn halfway', tBase: 10, mBase: 300, turn: true },
+        nuggets: { kind: 'roast', code: 'Co-2', watts: 300, note: 'High rack · from frozen · turn halfway', tBase: 10, mBase: 300, turn: true },
+        pizza: { kind: 'dense', code: 'Co-3', watts: 400, note: 'High rack or crust plate · from frozen · no preheat required', tBase: 12, mBase: 350, turn: false },
+        chips: { kind: 'dense', code: 'Co-3', watts: 400, note: 'High rack · from frozen · shake halfway', tBase: 12, mBase: 400, turn: true },
+        potatohalf: { kind: 'dense', code: 'Co-3', watts: 400, note: 'Halved, cut side to the grill · high rack', tBase: 10, mBase: 500, turn: false },
+        gratin: { kind: 'dense', code: 'Co-3', watts: 400, note: 'Shallow heat-proof dish on turntable · rest 3 min', tBase: 18, mBase: 450, turn: false },
+        lasagna: { kind: 'dense', code: 'Co-3', watts: 400, note: 'Heat-proof dish · already assembled · rest 5 min', tBase: 16, mBase: 800, turn: false }
       },
       pastas: {
         'spaghettoni-bronzo': { note: 'Package 12:00 · bronze', pkg: 12, bronze: true },
@@ -861,8 +883,9 @@
         return v.waterPer250 * (g / 250)
       },
       computeVeg(g, waterMl, veg) {
-        const t = veg.t250 * Math.pow(g / 250, 0.55) + 0.15 * (waterMl / 30)
-        return { t250: veg.t250, t }
+        const scale = 1000 / this.mw().watts
+        const t = veg.t250 * scale * Math.pow(g / 250, 0.55) + 0.15 * (waterMl / 30)
+        return { t250: veg.t250 * scale, t }
       },
       computeCombi(g, item) {
         const t = item.tBase * Math.pow(g / item.mBase, 0.65)
@@ -931,7 +954,25 @@
           this.el('mw-' + m).classList.toggle('on', id === m)
         })
         this.el('mode-combi').textContent = id === 'aeg' ? 'Combi-Lo · Combi-Hi' : 'Co-1 · Co-2 · Co-3'
+        this.applyMicrowaveText()
         this.update()
+      },
+      applyMicrowaveText() {
+        const mw = this.mw()
+        this.el('howto-pasta-power').innerHTML = '<strong>Stir once</strong> — Cook <strong>uncovered</strong> on ' + mw.high + '.'
+        this.el('howto-rice-power').innerHTML = '<strong>' + mw.watts + '&nbsp;W</strong> — ' + mw.high + ' on the ' + mw.name + '. Lid on, no grill. Glance once that water remains.'
+        this.el('howto-veg-power').innerHTML = '<strong>' + mw.watts + '&nbsp;W</strong> — Covered, ' + mw.high + '. No grill. Stir or shake halfway on portions over 250&nbsp;g.'
+        this.el('howto-combi-mode').innerHTML = '<strong>Combination</strong> — ' + mw.combiHow
+        this.el('howto-combi-why').innerHTML = '<strong>Why which mode</strong> — ' + mw.combiWhy
+        this.el('note-pasta').innerHTML = '<strong>Important</strong> · Cold tap water only · ' + mw.watts + '&nbsp;W microwave mode only (no grill / combination) · No oil · Contents are very hot.'
+        this.el('note-rice').innerHTML = '<strong>Important</strong> · Reishunger microwave rice cooker · lid on · ' + mw.watts + '&nbsp;W High · no grill · never dry-heat · steam is hot.'
+        this.el('note-veg').innerHTML = '<strong>Important</strong> · ' + mw.watts + '&nbsp;W High · covered · a few tablespoons of water only · no grill · steam burns.'
+        this.el('note-combi').innerHTML = '<strong>Important</strong> · Quartz grill under the ceiling · cavity and rack are very hot · use oven gloves · ' + mw.name + '.'
+        this.el('note-combi-modes').textContent = mw.combiNote
+        const groups = this.el('combi').querySelectorAll('optgroup')
+        groups[0].label = mw.combis.surface.label
+        groups[1].label = mw.combis.roast.label
+        groups[2].label = mw.combis.dense.label
       },
       setMode(mode) {
         this.mode = mode
@@ -1056,7 +1097,7 @@
         this.el('subtitle').textContent = 'Reishunger 546-W · ' + this.mw().name + ' at ' + this.mw().watts + ' W High · lid on · 75–450 g rice · water follows the cup table × variety factor'
         this.el('pasta-note').textContent = rice.note
         this.el('out-time').textContent = this.fmtTime(x.t)
-        this.el('out-time-unit').textContent = 'lid on · 1000 W · then rest ' + rice.rest + ' min'
+        this.el('out-time-unit').textContent = 'lid on · ' + this.mw().watts + ' W · then rest ' + rice.rest + ' min'
         this.el('lbl-grain').textContent = 'Rice'
         this.el('unit-grain').textContent = 'g dry'
         this.el('lbl-grain-slider').textContent = 'Rice'
@@ -1094,7 +1135,7 @@
         this.el('subtitle').textContent = this.mw().name + ' · ' + this.mw().watts + ' W High · covered · pasta cooker or a vented bowl · splash of water only'
         this.el('pasta-note').textContent = veg.prep + ' · ' + veg.note
         this.el('out-time').textContent = this.fmtTime(x.t)
-        this.el('out-time-unit').textContent = 'covered · 1000 W · rest 1 min'
+        this.el('out-time-unit').textContent = 'covered · ' + this.mw().watts + ' W · rest 1 min'
         this.el('lbl-grain').textContent = 'Vegetables'
         this.el('unit-grain').textContent = 'g prepared'
         this.el('lbl-grain-slider').textContent = 'Vegetables'
@@ -1121,11 +1162,12 @@
         const item = this.currentCombi()
         const g = Number(this.el('pasta-g').value)
         const x = this.computeCombi(g, item)
-        this.el('eyebrow').textContent = item.code + ' · ' + item.watts + ' W + grill'
-        this.el('subtitle').textContent = this.mw().name + ' · ' + (this.microwave === 'aeg' ? 'Combi-Lo / Combi-Hi' : 'Cook Mode Co-1 / Co-2 / Co-3') + ' · ' + this.mw().grill + ' W quartz grill · high rack or heat-proof dish · no plastic cookers'
+        const mode = this.mw().combis[item.kind]
+        this.el('eyebrow').textContent = mode.code + ' · ' + mode.watts + ' W + grill'
+        this.el('subtitle').textContent = this.mw().name + ' · ' + mode.code + ' · ' + this.mw().grill + ' W quartz grill · high rack or heat-proof dish · no plastic cookers'
         this.el('pasta-note').textContent = item.note + (item.turn ? ' · turn at half time' : '')
         this.el('out-time').textContent = this.fmtTime(x.t)
-        this.el('out-time-unit').textContent = item.code + ' · ' + item.watts + ' W + 900 W grill'
+        this.el('out-time-unit').textContent = mode.code + ' · ' + mode.watts + ' W + ' + this.mw().grill + ' W grill'
         this.el('lbl-grain').textContent = 'Food'
         this.el('unit-grain').textContent = 'g'
         this.el('lbl-grain-slider').textContent = 'Portion'
@@ -1135,10 +1177,10 @@
         this.el('out-water').textContent = '—'
         this.el('out-salt').textContent = item.turn ? 'yes' : 'no'
         this.el('out-mult').textContent = this.fmtNum(g) + ' g'
-        this.el('water-link').textContent = item.code
+        this.el('water-link').textContent = mode.code
         this.el('grain-note').textContent = 'Base portion ' + item.mBase + ' g → ' + this.fmtTime(item.tBase) + '. Time scales as (m / m_base)^0.65.'
         this.el('combi-breakdown').textContent =
-          item.code + '  ' + item.watts + ' W + grill  ·  t_base ' + this.fmtTime(item.tBase) +
+          mode.code + '  ' + mode.watts + ' W + grill  ·  t_base ' + this.fmtTime(item.tBase) +
           ' at ' + item.mBase + ' g  →  ' + this.fmtTime(x.t)
         document.querySelectorAll('#pasta-ticks .tick').forEach(tick => {
           tick.classList.toggle('active', Math.abs(Number(tick.dataset.stop) - g) < 15)
@@ -1209,6 +1251,7 @@
       })
       cooker.el('combi').addEventListener('change', () => cooker.setMode('combi'))
       cooker._lastId = cooker.el('pasta').value
+      cooker.applyMicrowaveText()
       cooker.update()
     })
   </script>

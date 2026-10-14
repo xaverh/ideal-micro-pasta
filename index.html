@@ -99,6 +99,7 @@
       color: var(--header-fg);
       border-color: var(--header-bg);
     }
+    .mw-switch { margin-top: 0.55rem; }
     .mode-pasta .rice-only,
     .mode-pasta .veg-only,
     .mode-pasta .combi-only { display: none; }
@@ -355,6 +356,10 @@
         <button type="button" id="mode-veg">Vegetables</button>
         <button type="button" id="mode-combi">Co-1 · Co-2 · Co-3</button>
       </div>
+      <div class="mode-switch mw-switch">
+        <button type="button" id="mw-lg" class="on">LG NeoChef MH6535</button>
+        <button type="button" id="mw-aeg">AEG MFB295DB</button>
+      </div>
     </header>
 
     <div class="card">
@@ -566,7 +571,7 @@
     <div class="card pasta-only">
       <h2>Algorithm</h2>
       <div class="formula-box">
-        Fitted for LG NeoChef MH6535 at 1000&nbsp;W, cold tap ≈ 15&nbsp;°C, uncovered cooker.
+        Fitted for the selected microwave. LG NeoChef MH6535 at 1000&nbsp;W (P_eff 650&nbsp;W); AEG MFB295DB at 900&nbsp;W (P_eff 585&nbsp;W). Cold tap ≈ 15&nbsp;°C, uncovered cooker.
         <br><br>
         <code>t = t_ad + (1 − γ) · t_heat + t_die</code>
         <ul>
@@ -574,7 +579,7 @@
           <li><code>t_heat = (V·c_w·ΔT_w + m_p·c_p·ΔT_p) / P_eff</code> using the actual sliders</li>
           <li><code>c_w = 4.184 J/g·K</code>, <code>ΔT_w = 82 K</code> (15 °C tap → ~97 °C)</li>
           <li><code>c_p = 1.8 J/g·K</code>, <code>ΔT_p = 70 K</code></li>
-          <li><code>P_eff = 650 W</code> (~65% of the 1000 W rating in a deep cooker)</li>
+          <li><code>P_eff</code> — 650&nbsp;W on the LG (1000&nbsp;W rating), 585&nbsp;W on the AEG (900&nbsp;W rating). ~65% coupling in a deep cooker.</li>
           <li><code>γ = 0.29</code> ordinary, <code>0.66</code> bronze — more of the heat-up already cooks a bronze die (333&nbsp;g / 1&nbsp;l / 8:00 spaghetti → 14:00; 154&nbsp;g / 617&nbsp;ml Spaghetti al Bronzo → 17:20)</li>
           <li><code>t_die = max(0, 5.31 + 0.58·(t_pkg − 11))</code> min if bronze-cut. Package cottura carries thickness (284&nbsp;g / 902&nbsp;ml Spaghetti al Bronzo → 18:20; 250&nbsp;g / 834&nbsp;ml Spaghettoni al Bronzo → 19:40)</li>
         </ul>
@@ -655,7 +660,7 @@
     </div>
 
     <footer>
-      Metric only · Microwave spaghetti maker · Reishunger rice cooker 546-W · Ninja Foodi Max AF400EU · Ninja Woodfire OO101EU · LG NeoChef MH6535
+      Metric only · Microwave spaghetti maker · Reishunger rice cooker 546-W · Ninja Foodi Max AF400EU · Ninja Woodfire OO101EU · LG NeoChef MH6535 · AEG MFB295DB
     </footer>
   </div>
 
@@ -671,6 +676,11 @@
       ],
       linkedWater: true,
       mode: 'pasta',
+      microwave: 'lg',
+      microwaves: {
+        lg: { name: 'LG NeoChef MH6535', short: 'LG', watts: 1000, peff: 650, grill: 900 },
+        aeg: { name: 'AEG MFB295DB', short: 'AEG', watts: 900, peff: 585, grill: 1000 }
+      },
       riceStops: [75, 150, 225, 300, 450],
       riceWaterStops: [210, 270, 540, 720],
       rices: {
@@ -834,7 +844,7 @@
         return 180 * cups * this.currentRice().waterFactor
       },
       computeRice(riceG, waterMl, rice) {
-        const tHeat = (waterMl * 4.184 * 82) / 650 / 60
+        const tHeat = (waterMl * 4.184 * 82) / this.peff() / 60
         const load = (1 - 0.22) * tHeat
         const n = riceG / 150
         const bulk = 0.35 * Math.max(0, n - 1) * Math.max(0, n - 1)
@@ -872,11 +882,13 @@
       },
       compute(pastaG, waterMl, pasta) {
         const ad = this.alDente(pasta.pkg)
-        const tHeat = (waterMl * 4.184 * 82 + pastaG * 1.8 * 70) / 650 / 60
+        const tHeat = (waterMl * 4.184 * 82 + pastaG * 1.8 * 70) / this.peff() / 60
         const load = (1 - (pasta.bronze ? 0.66 : 0.29)) * tHeat
         const die = pasta.bronze ? Math.max(0, 5.31 + 0.58 * (pasta.pkg - 11)) : 0
         return { ad, load, tHeat, die, t: ad + load + die }
       },
+      peff() { return this.microwaves[this.microwave].peff },
+      mw() { return this.microwaves[this.microwave] },
       seedManual(pasta) {
         this.el('manual-pkg').value = String(Math.round(pasta.pkg * 60 / 10) * 10)
         this.el('manual-bronze').checked = !!pasta.bronze
@@ -911,6 +923,14 @@
         const stops = this.mode === 'rice' ? this.riceWaterStops : this.mode === 'veg' ? this.vegWaterStops : this.waterStops
         const hit = stops.find(s => Math.abs(v - s) <= 12)
         if (hit != null) el.value = String(hit)
+        this.update()
+      },
+      setMicrowave(id) {
+        this.microwave = id
+        ;['lg', 'aeg'].forEach(m => {
+          this.el('mw-' + m).classList.toggle('on', id === m)
+        })
+        this.el('mode-combi').textContent = id === 'aeg' ? 'Combi-Lo · Combi-Hi' : 'Co-1 · Co-2 · Co-3'
         this.update()
       },
       setMode(mode) {
@@ -995,7 +1015,7 @@
         const pasta = this.currentPasta()
         const x = this.compute(pastaG, waterMl, pasta)
         this.el('eyebrow').textContent = 'Microwave Pasta Cooker'
-        this.el('subtitle').textContent = 'LG NeoChef MH6535 · 1000 W microwave mode · pasta 83–333 g · water linked by a non-linear curve, then adjustable · times in 10 s steps'
+        this.el('subtitle').textContent = this.mw().name + ' · ' + this.mw().watts + ' W microwave mode · pasta 83–333 g · water linked by a non-linear curve, then adjustable · times in 10 s steps'
         this.el('pasta-note').textContent = pasta.note
         this.el('out-time').textContent = this.fmtTime(x.t)
         this.el('out-time-unit').textContent = 'al dente start · 10 s steps'
@@ -1033,7 +1053,7 @@
         const x = this.computeRice(riceG, waterMl, rice)
         const salt = Math.round(rice.saltPer150 * (riceG / 150) * 10) / 10
         this.el('eyebrow').textContent = 'Microwave Rice Cooker'
-        this.el('subtitle').textContent = 'Reishunger 546-W · LG NeoChef at 1000 W High · lid on · 75–450 g rice · water follows the cup table × variety factor'
+        this.el('subtitle').textContent = 'Reishunger 546-W · ' + this.mw().name + ' at ' + this.mw().watts + ' W High · lid on · 75–450 g rice · water follows the cup table × variety factor'
         this.el('pasta-note').textContent = rice.note
         this.el('out-time').textContent = this.fmtTime(x.t)
         this.el('out-time-unit').textContent = 'lid on · 1000 W · then rest ' + rice.rest + ' min'
@@ -1071,7 +1091,7 @@
         const waterMl = Number(this.el('water-ml').value)
         const x = this.computeVeg(g, waterMl, veg)
         this.el('eyebrow').textContent = 'Microwave vegetable steam'
-        this.el('subtitle').textContent = 'LG NeoChef MH6535 · 1000 W High · covered · pasta cooker or a vented bowl · splash of water only'
+        this.el('subtitle').textContent = this.mw().name + ' · ' + this.mw().watts + ' W High · covered · pasta cooker or a vented bowl · splash of water only'
         this.el('pasta-note').textContent = veg.prep + ' · ' + veg.note
         this.el('out-time').textContent = this.fmtTime(x.t)
         this.el('out-time-unit').textContent = 'covered · 1000 W · rest 1 min'
@@ -1102,7 +1122,7 @@
         const g = Number(this.el('pasta-g').value)
         const x = this.computeCombi(g, item)
         this.el('eyebrow').textContent = item.code + ' · ' + item.watts + ' W + grill'
-        this.el('subtitle').textContent = 'LG NeoChef MH6535 · Cook Mode Co-1 / Co-2 / Co-3 · 900 W quartz grill · high rack or heat-proof dish · no plastic cookers'
+        this.el('subtitle').textContent = this.mw().name + ' · ' + (this.microwave === 'aeg' ? 'Combi-Lo / Combi-Hi' : 'Cook Mode Co-1 / Co-2 / Co-3') + ' · ' + this.mw().grill + ' W quartz grill · high rack or heat-proof dish · no plastic cookers'
         this.el('pasta-note').textContent = item.note + (item.turn ? ' · turn at half time' : '')
         this.el('out-time').textContent = this.fmtTime(x.t)
         this.el('out-time-unit').textContent = item.code + ' · ' + item.watts + ' W + 900 W grill'
@@ -1177,6 +1197,8 @@
       cooker.el('mode-rice').addEventListener('click', () => cooker.setMode('rice'))
       cooker.el('mode-veg').addEventListener('click', () => cooker.setMode('veg'))
       cooker.el('mode-combi').addEventListener('click', () => cooker.setMode('combi'))
+      cooker.el('mw-lg').addEventListener('click', () => cooker.setMicrowave('lg'))
+      cooker.el('mw-aeg').addEventListener('click', () => cooker.setMicrowave('aeg'))
       cooker.el('rice').addEventListener('change', () => {
         cooker.linkedWater = true
         cooker.update()
